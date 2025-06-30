@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - MedPrep{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h2 mb-1">Welcome back, {{ user.first_name|default:user.username }}!</h1>
+                    <p class="text-muted">Ready to continue your MBBS exam preparation?</p>
+                </div>
+                {% if user_profile.is_premium_active %}
+                <span class="badge bg-warning text-dark fs-6">
+                    <i class="fas fa-crown me-1"></i>Premium Active
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_quizzes }}</h4>
+                            <p class="mb-0">Total Quizzes</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-quiz fs-1 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ avg_score }}%</h4>
+                            <p class="mb-0">Average Score</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-chart-line fs-1 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ user_profile.year_of_study }}</h4>
+                            <p class="mb-0">Year of Study</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-graduation-cap fs-1 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ available_subjects.count }}</h4>
+                            <p class="mb-0">Subjects Available</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-book fs-1 opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="{% url 'core:question_bank' %}" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-play me-2"></i>Start Quiz
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'core:resources' %}" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-book-open me-2"></i>Study Resources
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'core:leaderboard' %}" class="btn btn-warning btn-lg w-100">
+                                <i class="fas fa-trophy me-2"></i>Leaderboard
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'core:profile' %}" class="btn btn-info btn-lg w-100">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Subscription Status</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if user_profile.is_premium_active %}
+                        <i class="fas fa-crown text-warning fs-1 mb-3"></i>
+                        <h6 class="text-warning">Premium Active</h6>
+                        <p class="text-muted small mb-3">
+                            Expires: {{ user_profile.premium_expires_at|date:"M d, Y" }}
+                        </p>
+                        <a href="{% url 'core:payment_status' %}" class="btn btn-outline-warning">
+                            Manage Subscription
+                        </a>
+                    {% else %}
+                        <i class="fas fa-user text-muted fs-1 mb-3"></i>
+                        <h6 class="text-muted">Free Plan</h6>
+                        <p class="text-muted small mb-3">
+                            Upgrade to access premium features
+                        </p>
+                        <a href="{% url 'core:subscription' %}" class="btn btn-primary">
+                            Upgrade Now
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Quizzes -->
+    {% if recent_quizzes %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Quiz Attempts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Topic</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in recent_quizzes %}
+                                <tr>
+                                    <td>{{ quiz.topic.subject.name }}</td>
+                                    <td>{{ quiz.topic.name }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if quiz.percentage_score >= 80 %}success{% elif quiz.percentage_score >= 60 %}warning{% else %}danger{% endif %}">
+                                            {{ quiz.percentage_score }}%
+                                        </span>
+                                    </td>
+                                    <td>{{ quiz.completed_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'core:quiz_result' quiz.pk %}" class="btn btn-sm btn-outline-primary">
+                                            View Result
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
