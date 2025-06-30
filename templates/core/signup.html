@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - MedPrep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/signup.css' %}?v=2025-final-navigation">
+{% endblock %}
+
+{% block content %}
+<div class="signup-container">
+    <div class="signup-card">
+        <a href="{% url 'core:home' %}" class="back-to-home">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        
+        <div class="signup-header">
+            <h1 class="signup-title">Join MedPrep</h1>
+            <p class="signup-subtitle">Start your MBBS exam preparation journey</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="signup-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.first_name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.last_name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.email.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.username.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.password1.errors.0 }}
+                    </div>
+                {% endif %}
+                <div class="password-requirements">
+                    <h6>Password Requirements:</h6>
+                    <ul>
+                        <li>At least 8 characters long</li>
+                        <li>Cannot be entirely numeric</li>
+                        <li>Should not be too common</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.password2.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="terms-checkbox">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">
+                    I agree to the <a href="{% url 'core:terms' %}" target="_blank">Terms of Service</a> 
+                    and <a href="{% url 'core:privacy' %}" target="_blank">Privacy Policy</a>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-signup">
+                <i class="fas fa-user-plus"></i>
+                Create Account
+            </button>
+        </form>
+
+        <div class="signup-links">
+            <p>Already have an account? <a href="{% url 'core:login' %}">Sign in here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subscription Plans | MedPrep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/subscription.css' %}?v={{ CACHE_BUSTER }}">
+{% endblock %}
+
+{% block content %}
+<div class="subscription-container">
+    <!-- Hero Section -->
+    <div class="subscription-hero">
+        <div class="hero-content">
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-sm me-3">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+                <h1 class="hero-title mb-0">Choose Your Plan</h1>
+            </div>
+            <p class="hero-subtitle">Unlock your full potential with our comprehensive medical exam preparation</p>
+            
+            <div class="billing-toggle">
+                <span class="billing-label">Monthly</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="billingToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="billing-label">Yearly <span class="discount-badge">Save 20%</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Plans -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card free-plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Free</h3>
+                        <div class="plan-price">
+                            <span class="price">$0</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Perfect for getting started</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i> 100 practice questions</li>
+                            <li><i class="fas fa-check"></i> Basic performance tracking</li>
+                            <li><i class="fas fa-check"></i> 3 subjects access</li>
+                            <li><i class="fas fa-check"></i> Community discussions</li>
+                            <li><i class="fas fa-times text-muted"></i> Detailed analytics</li>
+                            <li><i class="fas fa-times text-muted"></i> Unlimited quizzes</li>
+                            <li><i class="fas fa-times text-muted"></i> Offline access</li>
+                            <li><i class="fas fa-times text-muted"></i> Priority support</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="plan-action">
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-outline-primary btn-block" disabled>Current Plan</button>
+                        {% else %}
+                            <a href="{% url 'core:signup' %}" class="btn btn-outline-primary btn-block">
+                                Get Started Free
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Basic Plan -->
+                <div class="pricing-card basic-plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Basic</h3>
+                        <div class="plan-price">
+                            <span class="price monthly-price">$19</span>
+                            <span class="price yearly-price" style="display: none;">$15</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Great for serious students</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i> 1,000+ practice questions</li>
+                            <li><i class="fas fa-check"></i> Advanced performance tracking</li>
+                            <li><i class="fas fa-check"></i> All subjects access</li>
+                            <li><i class="fas fa-check"></i> Study resources & notes</li>
+                            <li><i class="fas fa-check"></i> Basic analytics</li>
+                            <li><i class="fas fa-check"></i> Quiz customization</li>
+                            <li><i class="fas fa-times text-muted"></i> Offline access</li>
+                            <li><i class="fas fa-times text-muted"></i> Priority support</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="plan-action">
+                        <a href="{% url 'core:payment' 1 %}" class="btn btn-primary btn-block">
+                            Choose Basic
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="pricing-card premium-plan popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name">Premium</h3>
+                        <div class="plan-price">
+                            <span class="price monthly-price">$39</span>
+                            <span class="price yearly-price" style="display: none;">$31</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Everything you need to succeed</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i> 5,000+ practice questions</li>
+                            <li><i class="fas fa-check"></i> Comprehensive analytics</li>
+                            <li><i class="fas fa-check"></i> All subjects & topics</li>
+                            <li><i class="fas fa-check"></i> Video lectures</li>
+                            <li><i class="fas fa-check"></i> Flashcards & study tools</li>
+                            <li><i class="fas fa-check"></i> Unlimited custom quizzes</li>
+                            <li><i class="fas fa-check"></i> Offline access</li>
+                            <li><i class="fas fa-check"></i> Email support</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="plan-action">
+                        <a href="{% url 'core:payment' 2 %}" class="btn btn-success btn-block">
+                            Choose Premium
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="pricing-card pro-plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Pro</h3>
+                        <div class="plan-price">
+                            <span class="price monthly-price">$59</span>
+                            <span class="price yearly-price" style="display: none;">$47</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">For the most ambitious learners</p>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i> 10,000+ practice questions</li>
+                            <li><i class="fas fa-check"></i> AI-powered recommendations</li>
+                            <li><i class="fas fa-check"></i> All premium features</li>
+                            <li><i class="fas fa-check"></i> Personal study coach</li>
+                            <li><i class="fas fa-check"></i> Live Q&A sessions</li>
+                            <li><i class="fas fa-check"></i> Mock exams</li>
+                            <li><i class="fas fa-check"></i> Priority support</li>
+                            <li><i class="fas fa-check"></i> 1-on-1 consultations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="plan-action">
+                        <a href="{% url 'core:payment' 3 %}" class="btn btn-warning btn-block">
+                            Choose Pro
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Comparison -->
+    <section class="comparison-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Feature Comparison</h2>
+                <p>See what's included in each plan</p>
+            </div>
+            
+            <div class="comparison-table-wrapper">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Features</th>
+                            <th>Free</th>
+                            <th>Basic</th>
+                            <th class="featured">Premium</th>
+                            <th>Pro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Practice Questions</td>
+                            <td>100</td>
+                            <td>1,000+</td>
+                            <td class="featured">5,000+</td>
+                            <td>10,000+</td>
+                        </tr>
+                        <tr>
+                            <td>Subject Access</td>
+                            <td>3 subjects</td>
+                            <td>All subjects</td>
+                            <td class="featured">All subjects</td>
+                            <td>All subjects</td>
+                        </tr>
+                        <tr>
+                            <td>Performance Analytics</td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                            <td class="featured"><i class="fas fa-check text-success"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Study Resources</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                            <td class="featured"><i class="fas fa-check text-success"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Video Lectures</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td class="featured"><i class="fas fa-check text-success"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Offline Access</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td class="featured"><i class="fas fa-check text-success"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>AI Recommendations</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td class="featured"><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Personal Study Coach</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td class="featured"><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Priority Support</td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-times text-danger"></i></td>
+                            <td class="featured"><i class="fas fa-times text-danger"></i></td>
+                            <td><i class="fas fa-check text-success"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Get answers to common subscription questions</p>
+            </div>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h4>Can I change my plan anytime?</h4>
+                    <p>Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Is there a free trial for paid plans?</h4>
+                    <p>We offer a 7-day free trial for all paid plans. You can cancel anytime during the trial period without being charged.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>What payment methods do you accept?</h4>
+                    <p>We accept all major credit cards, PayPal, and bank transfers for annual subscriptions.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Can I cancel my subscription?</h4>
+                    <p>Yes, you can cancel your subscription at any time from your account settings. Your access will continue until the end of your billing period.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Do you offer student discounts?</h4>
+                    <p>Yes, we offer a 30% discount for verified students. Contact support with your student ID for more information.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Is my data secure?</h4>
+                    <p>Absolutely. We use industry-standard encryption and security measures to protect your personal information and study data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Signals -->
+    <section class="trust-section">
+        <div class="container">
+            <div class="trust-content">
+                <h2>Trusted by Medical Students Worldwide</h2>
+                <div class="trust-stats">
+                    <div class="trust-stat">
+                        <div class="stat-number">50,000+</div>
+                        <div class="stat-label">Active Students</div>
+                    </div>
+                    <div class="trust-stat">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Pass Rate</div>
+                    </div>
+                    <div class="trust-stat">
+                        <div class="stat-number">4.8/5</div>
+                        <div class="stat-label">User Rating</div>
+                    </div>
+                    <div class="trust-stat">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Universities</div>
+                    </div>
+                </div>
+                
+                <div class="guarantees">
+                    <div class="guarantee-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>30-Day Money Back Guarantee</h4>
+                        <p>Not satisfied? Get a full refund within 30 days</p>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fas fa-lock"></i>
+                        <h4>Secure Payment</h4>
+                        <p>Your payment information is encrypted and secure</p>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fas fa-headset"></i>
+                        <h4>24/7 Support</h4>
+                        <p>Get help whenever you need it from our support team</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="final-cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Excel in Your Medical Exams?</h2>
+                <p>Join thousands of successful medical students who chose MedPrep</p>
+                <div class="cta-buttons">
+                    <a href="{% url 'core:signup' %}" class="btn btn-primary btn-lg">
+                        Start Free Trial
+                    </a>
+                    <a href="{% url 'core:contact' %}" class="btn btn-outline-primary btn-lg">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const billingToggle = document.getElementById('billingToggle');
+    const monthlyPrices = document.querySelectorAll('.monthly-price');
+    const yearlyPrices = document.querySelectorAll('.yearly-price');
+    
+    // Billing toggle functionality
+    billingToggle.addEventListener('change', function() {
+        const isYearly = this.checked;
+        
+        monthlyPrices.forEach(price => {
+            price.style.display = isYearly ? 'none' : 'inline';
+        });
+        
+        yearlyPrices.forEach(price => {
+            price.style.display = isYearly ? 'inline' : 'none';
+        });
+    });
+    
+    // Add click tracking for plan selection
+    document.querySelectorAll('.pricing-card .btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const planName = this.closest('.pricing-card').querySelector('.plan-name').textContent;
+            console.log(`Plan selected: ${planName}`);
+            // Add analytics tracking here
+        });
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Add animation when cards come into view
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    document.querySelectorAll('.pricing-card').forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

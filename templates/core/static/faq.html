@@ -1,0 +1,680 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Frequently Asked Questions | MedPrep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/static-pages.css' %}?v={{ CACHE_BUSTER }}">
+{% endblock %}
+
+{% block content %}
+<div class="static-page-container">
+    <!-- Hero Section -->
+    <div class="page-hero">
+        <div class="hero-content">
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-sm me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'core:home' %}" class="btn btn-outline-light btn-sm me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                {% endif %}
+                <h1 class="hero-title mb-0">Frequently Asked Questions</h1>
+            </div>
+            <p class="hero-subtitle">Find answers to common questions about MedPrep</p>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <section class="faq-search-section">
+        <div class="container">
+            <div class="search-box">
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="faqSearch" 
+                           placeholder="Search for answers...">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Categories -->
+    <section class="faq-categories-section">
+        <div class="container">
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">All Questions</button>
+                <button class="category-tab" data-category="account">Account & Billing</button>
+                <button class="category-tab" data-category="platform">Platform Usage</button>
+                <button class="category-tab" data-category="content">Content & Exams</button>
+                <button class="category-tab" data-category="technical">Technical Support</button>
+                <button class="category-tab" data-category="subscription">Subscriptions</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <section class="faq-content-section">
+        <div class="container">
+            <!-- Account & Billing -->
+            <div class="faq-category" data-category="account">
+                <h3 class="category-title">Account & Billing</h3>
+                
+                <div class="faq-item" data-keywords="account registration sign up create">
+                    <div class="faq-question">
+                        <span>How do I create an account?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Creating an account is simple and free:</p>
+                        <ol>
+                            <li>Click the "Register" button in the top navigation</li>
+                            <li>Fill in your personal information (name, email, etc.)</li>
+                            <li>Choose a secure password</li>
+                            <li>Verify your email address</li>
+                            <li>Complete your profile setup</li>
+                        </ol>
+                        <p>Once registered, you'll have access to free content and can upgrade to premium features anytime.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="billing payment subscription cancel">
+                    <div class="faq-question">
+                        <span>How can I cancel my subscription?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can cancel your subscription at any time:</p>
+                        <ol>
+                            <li>Log into your account</li>
+                            <li>Go to "Account Settings" → "Subscription"</li>
+                            <li>Click "Cancel Subscription"</li>
+                            <li>Follow the cancellation process</li>
+                        </ol>
+                        <p>Your access will continue until the end of your current billing period. No refunds are provided for partial months.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="forgot password reset login">
+                    <div class="faq-question">
+                        <span>I forgot my password. How do I reset it?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>To reset your password:</p>
+                        <ol>
+                            <li>Go to the login page</li>
+                            <li>Click "Forgot Password?"</li>
+                            <li>Enter your email address</li>
+                            <li>Check your email for reset instructions</li>
+                            <li>Follow the link to create a new password</li>
+                        </ol>
+                        <p>If you don't receive the email within 10 minutes, check your spam folder or contact support.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform Usage -->
+            <div class="faq-category" data-category="platform">
+                <h3 class="category-title">Platform Usage</h3>
+                
+                <div class="faq-item" data-keywords="quiz test practice start take">
+                    <div class="faq-question">
+                        <span>How do I start a quiz?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Starting a quiz is easy:</p>
+                        <ol>
+                            <li>Navigate to the "Quizzes" section</li>
+                            <li>Choose your subject or topic</li>
+                            <li>Select quiz type (Quick, Full, or Timed)</li>
+                            <li>Review quiz settings</li>
+                            <li>Click "Start Quiz"</li>
+                        </ol>
+                        <p>You can pause and resume quizzes at any time. Your progress is automatically saved.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="progress tracking performance analytics">
+                    <div class="faq-question">
+                        <span>How can I track my progress?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>MedPrep provides comprehensive progress tracking:</p>
+                        <ul>
+                            <li><strong>Dashboard:</strong> Overview of your recent activity and performance</li>
+                            <li><strong>Analytics:</strong> Detailed performance metrics by subject and topic</li>
+                            <li><strong>Study Timeline:</strong> Visual representation of your study history</li>
+                            <li><strong>Weak Areas:</strong> Identification of topics needing more practice</li>
+                            <li><strong>Achievement Badges:</strong> Milestones and accomplishments</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="mobile app phone tablet offline">
+                    <div class="faq-question">
+                        <span>Can I use MedPrep on my mobile device?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! MedPrep is fully responsive and works great on all devices:</p>
+                        <ul>
+                            <li>Access through any web browser on your phone or tablet</li>
+                            <li>Native mobile apps coming soon for iOS and Android</li>
+                            <li>Offline mode available for premium subscribers</li>
+                            <li>Sync your progress across all devices</li>
+                        </ul>
+                        <p>For the best mobile experience, add MedPrep to your home screen as a web app.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content & Exams -->
+            <div class="faq-category" data-category="content">
+                <h3 class="category-title">Content & Exams</h3>
+                
+                <div class="faq-item" data-keywords="questions updated content new fresh">
+                    <div class="faq-question">
+                        <span>How often is the content updated?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We continuously update our content to ensure accuracy and relevance:</p>
+                        <ul>
+                            <li><strong>Weekly:</strong> New questions and practice materials</li>
+                            <li><strong>Monthly:</strong> Content reviews and updates</li>
+                            <li><strong>Quarterly:</strong> Major content additions and curriculum updates</li>
+                            <li><strong>As needed:</strong> Immediate corrections for any errors reported</li>
+                        </ul>
+                        <p>All content is reviewed by medical professionals and educators before publication.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="subjects covered topics available medical">
+                    <div class="faq-question">
+                        <span>What subjects and topics are covered?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>MedPrep covers all major medical subjects:</p>
+                        <ul>
+                            <li>Anatomy & Physiology</li>
+                            <li>Pathology</li>
+                            <li>Pharmacology</li>
+                            <li>Microbiology</li>
+                            <li>Internal Medicine</li>
+                            <li>Surgery</li>
+                            <li>Pediatrics</li>
+                            <li>Obstetrics & Gynecology</li>
+                            <li>Psychiatry</li>
+                            <li>And many more specialized topics</li>
+                        </ul>
+                        <p>New subjects are added regularly based on user feedback and exam requirements.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="difficulty levels easy hard medium adaptive">
+                    <div class="faq-question">
+                        <span>How are question difficulty levels determined?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Questions are categorized into three difficulty levels:</p>
+                        <ul>
+                            <li><strong>Easy:</strong> Basic concepts and recall questions</li>
+                            <li><strong>Medium:</strong> Application and analysis questions</li>
+                            <li><strong>Hard:</strong> Complex scenarios and synthesis questions</li>
+                        </ul>
+                        <p>Our adaptive learning system adjusts question difficulty based on your performance to optimize learning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Support -->
+            <div class="faq-category" data-category="technical">
+                <h3 class="category-title">Technical Support</h3>
+                
+                <div class="faq-item" data-keywords="browser requirements system supported">
+                    <div class="faq-question">
+                        <span>What are the system requirements?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>MedPrep works on most modern devices and browsers:</p>
+                        <ul>
+                            <li><strong>Browsers:</strong> Chrome 90+, Firefox 85+, Safari 14+, Edge 90+</li>
+                            <li><strong>Operating Systems:</strong> Windows 10+, macOS 10.14+, iOS 13+, Android 8+</li>
+                            <li><strong>Internet:</strong> Stable broadband connection recommended</li>
+                            <li><strong>Hardware:</strong> 4GB RAM, 1GB free storage for offline content</li>
+                        </ul>
+                        <p>For optimal performance, keep your browser updated and enable JavaScript.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="loading slow performance issues problems">
+                    <div class="faq-question">
+                        <span>The platform is loading slowly. What can I do?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Try these troubleshooting steps:</p>
+                        <ol>
+                            <li>Check your internet connection speed</li>
+                            <li>Clear your browser cache and cookies</li>
+                            <li>Disable browser extensions temporarily</li>
+                            <li>Try a different browser or incognito mode</li>
+                            <li>Restart your device</li>
+                            <li>Contact support if issues persist</li>
+                        </ol>
+                        <p>Most performance issues are resolved by clearing the browser cache.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscriptions -->
+            <div class="faq-category" data-category="subscription">
+                <h3 class="category-title">Subscriptions</h3>
+                
+                <div class="faq-item" data-keywords="free trial premium features subscription plans">
+                    <div class="faq-question">
+                        <span>What's included in the free version?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The free version includes:</p>
+                        <ul>
+                            <li>Access to 100+ practice questions</li>
+                            <li>Basic performance tracking</li>
+                            <li>Limited study resources</li>
+                            <li>Community discussions</li>
+                        </ul>
+                        <p>Premium features include unlimited questions, detailed analytics, offline access, and priority support.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-keywords="payment methods credit card paypal billing">
+                    <div class="faq-question">
+                        <span>What payment methods do you accept?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept various payment methods:</p>
+                        <ul>
+                            <li>Credit Cards (Visa, MasterCard, American Express)</li>
+                            <li>Debit Cards</li>
+                            <li>PayPal</li>
+                            <li>Bank Transfer (for annual plans)</li>
+                            <li>Student discounts available</li>
+                        </ul>
+                        <p>All payments are processed securely through encrypted payment gateways.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Still Have Questions -->
+    <section class="contact-cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Still Have Questions?</h2>
+                <p>Can't find what you're looking for? Our support team is here to help!</p>
+                <div class="cta-buttons">
+                    <a href="{% url 'core:contact' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-envelope"></i> Contact Support
+                    </a>
+                    <a href="/help/" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-book"></i> Help Center
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const faqSearch = document.getElementById('faqSearch');
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    const faqItems = document.querySelectorAll('.faq-item');
+    const faqCategories = document.querySelectorAll('.faq-category');
+    
+    // FAQ Item Toggle
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        
+        question.addEventListener('click', function() {
+            const isActive = item.classList.contains('active');
+            
+            // Close all other items
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.faq-answer').classList.remove('show');
+                }
+            });
+            
+            // Toggle current item
+            if (isActive) {
+                item.classList.remove('active');
+                answer.classList.remove('show');
+            } else {
+                item.classList.add('active');
+                answer.classList.add('show');
+            }
+        });
+    });
+    
+    // Category Filtering
+    categoryTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const category = this.dataset.category;
+            
+            // Update active tab
+            categoryTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show/hide categories
+            if (category === 'all') {
+                faqCategories.forEach(cat => cat.style.display = 'block');
+            } else {
+                faqCategories.forEach(cat => {
+                    if (cat.dataset.category === category) {
+                        cat.style.display = 'block';
+                    } else {
+                        cat.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Clear search
+            faqSearch.value = '';
+        });
+    });
+    
+    // Search Functionality
+    faqSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+            // Show all items in current category
+            const activeCategory = document.querySelector('.category-tab.active').dataset.category;
+            
+            if (activeCategory === 'all') {
+                faqCategories.forEach(cat => cat.style.display = 'block');
+                faqItems.forEach(item => item.style.display = 'block');
+            } else {
+                faqCategories.forEach(cat => {
+                    if (cat.dataset.category === activeCategory) {
+                        cat.style.display = 'block';
+                        cat.querySelectorAll('.faq-item').forEach(item => item.style.display = 'block');
+                    } else {
+                        cat.style.display = 'none';
+                    }
+                });
+            }
+        } else {
+            // Search in all items
+            let hasResults = false;
+            
+            faqCategories.forEach(category => {
+                let categoryHasResults = false;
+                
+                category.querySelectorAll('.faq-item').forEach(item => {
+                    const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                    const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                    const keywords = item.dataset.keywords || '';
+                    
+                    if (question.includes(searchTerm) || 
+                        answer.includes(searchTerm) || 
+                        keywords.includes(searchTerm)) {
+                        item.style.display = 'block';
+                        categoryHasResults = true;
+                        hasResults = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                if (categoryHasResults) {
+                    category.style.display = 'block';
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+            
+            // Show "no results" message if needed
+            if (!hasResults) {
+                showNoResults();
+            } else {
+                hideNoResults();
+            }
+        }
+    });
+    
+    function showNoResults() {
+        let noResultsDiv = document.getElementById('noResults');
+        if (!noResultsDiv) {
+            noResultsDiv = document.createElement('div');
+            noResultsDiv.id = 'noResults';
+            noResultsDiv.className = 'no-results';
+            noResultsDiv.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>No results found</h4>
+                    <p>Try different keywords or <a href="${window.location.origin}/contact/">contact support</a> for help.</p>
+                </div>
+            `;
+            document.querySelector('.faq-content-section .container').appendChild(noResultsDiv);
+        }
+        noResultsDiv.style.display = 'block';
+    }
+    
+    function hideNoResults() {
+        const noResultsDiv = document.getElementById('noResults');
+        if (noResultsDiv) {
+            noResultsDiv.style.display = 'none';
+        }
+    }
+    
+    // URL hash handling for direct links to FAQ items
+    function handleHashLink() {
+        const hash = window.location.hash;
+        if (hash) {
+            const targetItem = document.querySelector(hash);
+            if (targetItem && targetItem.classList.contains('faq-item')) {
+                // Open the FAQ item
+                targetItem.classList.add('active');
+                targetItem.querySelector('.faq-answer').classList.add('show');
+                
+                // Scroll to item
+                setTimeout(() => {
+                    targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        }
+    }
+    
+    // Handle hash links on page load and hash change
+    handleHashLink();
+    window.addEventListener('hashchange', handleHashLink);
+    
+    // Add smooth scrolling for category navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+
+<style>
+/* Additional FAQ-specific styles */
+.faq-search-section {
+    padding: 2rem 0;
+    background: var(--background-light);
+}
+
+.search-box {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.faq-categories-section {
+    padding: 1rem 0;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 80px;
+    z-index: 100;
+}
+
+.category-tabs {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0 1rem;
+}
+
+.category-tab {
+    background: none;
+    border: 2px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.category-tab:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.category-tab.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.faq-content-section {
+    padding: 3rem 0;
+}
+
+.category-title {
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-light);
+    font-size: 1.5rem;
+}
+
+.contact-cta-section {
+    background: var(--background-light);
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.social-section {
+    padding: 3rem 0;
+    background: white;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.social-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    color: var(--text-color);
+    min-width: 120px;
+}
+
+.social-link:hover {
+    transform: translateY(-5px);
+    text-decoration: none;
+}
+
+.social-link.facebook:hover { color: #1877F2; }
+.social-link.twitter:hover { color: #1DA1F2; }
+.social-link.linkedin:hover { color: #0A66C2; }
+.social-link.instagram:hover { color: #E4405F; }
+.social-link.youtube:hover { color: #FF0000; }
+
+.social-link i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.help-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.help-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.help-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.help-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .category-tabs {
+        padding: 0 0.5rem;
+    }
+    
+    .category-tab {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .social-links {
+        gap: 1rem;
+    }
+    
+    .social-link {
+        min-width: 100px;
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}

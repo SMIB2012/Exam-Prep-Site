@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us | MedPrep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/static-pages.css' %}?v={{ CACHE_BUSTER }}">
+{% endblock %}
+
+{% block content %}
+<div class="static-page-container">
+    <!-- Hero Section -->
+    <div class="page-hero">
+        <div class="hero-content">
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-sm me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'core:home' %}" class="btn btn-outline-light btn-sm me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                {% endif %}
+                <h1 class="hero-title mb-0">Contact Us</h1>
+            </div>
+            <p class="hero-subtitle">We're here to help you succeed in your medical career</p>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get in Touch</h2>
+                <p class="section-subtitle">Have questions? We'd love to hear from you</p>
+            </div>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email Us</h3>
+                    <p>support@medprep.com</p>
+                    <p>info@medprep.com</p>
+                    <small class="text-muted">We typically respond within 24 hours</small>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3>Call Us</h3>
+                    <p>+1 (555) 123-4567</p>
+                    <p>+1 (555) 987-6543</p>
+                    <small class="text-muted">Monday - Friday, 9 AM - 6 PM EST</small>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Visit Us</h3>
+                    <p>123 Medical Education Blvd<br>Suite 456<br>Boston, MA 02101</p>
+                    <small class="text-muted">By appointment only</small>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Support Hours</h3>
+                    <p><strong>Monday - Friday:</strong><br>9:00 AM - 6:00 PM EST</p>
+                    <p><strong>Weekends:</strong><br>10:00 AM - 4:00 PM EST</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="form-section">
+        <div class="container">
+            <div class="contact-form">
+                <h3>Send us a Message</h3>
+                <p class="text-muted mb-4">Fill out the form below and we'll get back to you as soon as possible.</p>
+                
+                <form method="post" id="contactForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">First Name *</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject *</label>
+                        <select class="form-select" id="subject" name="subject" required>
+                            <option value="">Select a subject</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="billing">Billing Question</option>
+                            <option value="content">Content Issue</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="partnership">Partnership Opportunity</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message *</label>
+                        <textarea class="form-control" id="message" name="message" rows="6" 
+                                  placeholder="Please provide as much detail as possible..." required></textarea>
+                        <div class="form-text">Minimum 10 characters required</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter" value="1">
+                            <label class="form-check-label" for="newsletter">
+                                Subscribe to our newsletter for updates and study tips
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                            <label class="form-check-label" for="privacy">
+                                I agree to the <a href="{% url 'core:privacy' %}" target="_blank">Privacy Policy</a> *
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Quick Links -->
+    <section class="faq-links-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Quick Help</h2>
+                <p class="section-subtitle">Looking for immediate answers? Check out these resources</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-question-circle text-primary"></i>
+                        </div>
+                        <h4>FAQ</h4>
+                        <p>Find answers to commonly asked questions about our platform and services.</p>
+                        <a href="{% url 'core:faq' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-right"></i> View FAQ
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-life-ring text-success"></i>
+                        </div>
+                        <h4>Help Center</h4>
+                        <p>Access detailed guides, tutorials, and troubleshooting resources.</p>
+                        <a href="/help/" class="btn btn-outline-success">
+                            <i class="fas fa-arrow-right"></i> Get Help
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <div class="help-card">
+                        <div class="help-icon">
+                            <i class="fas fa-comments text-info"></i>
+                        </div>
+                        <h4>Live Chat</h4>
+                        <p>Chat with our support team in real-time for immediate assistance.</p>
+                        <button class="btn btn-outline-info" id="startChat">
+                            <i class="fas fa-arrow-right"></i> Start Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media -->
+    <section class="social-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Connect With Us</h2>
+                <p class="section-subtitle">Follow us on social media for updates, tips, and community discussions</p>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://facebook.com/medprep" class="social-link facebook" target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </a>
+                <a href="https://twitter.com/medprep" class="social-link twitter" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                    <span>Twitter</span>
+                </a>
+                <a href="https://linkedin.com/company/medprep" class="social-link linkedin" target="_blank">
+                    <i class="fab fa-linkedin-in"></i>
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://instagram.com/medprep" class="social-link instagram" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://youtube.com/medprep" class="social-link youtube" target="_blank">
+                    <i class="fab fa-youtube"></i>
+                    <span>YouTube</span>
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Form validation and submission
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (validateForm()) {
+            submitForm();
+        }
+    });
+    
+    function validateForm() {
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value.trim();
+        const privacy = document.getElementById('privacy').checked;
+        
+        if (!firstName || !lastName) {
+            showAlert('Please enter your full name.', 'warning');
+            return false;
+        }
+        
+        if (!email || !isValidEmail(email)) {
+            showAlert('Please enter a valid email address.', 'warning');
+            return false;
+        }
+        
+        if (!subject) {
+            showAlert('Please select a subject.', 'warning');
+            return false;
+        }
+        
+        if (!message || message.length < 10) {
+            showAlert('Please enter a message with at least 10 characters.', 'warning');
+            return false;
+        }
+        
+        if (!privacy) {
+            showAlert('Please accept the Privacy Policy to continue.', 'warning');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function submitForm() {
+        // Show loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        submitBtn.disabled = true;
+        
+        // Simulate form submission (replace with actual AJAX call)
+        setTimeout(() => {
+            showAlert('Thank you for your message! We\'ll get back to you within 24 hours.', 'success');
+            contactForm.reset();
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+            submitBtn.disabled = false;
+        }, 2000);
+    }
+    
+    function showAlert(message, type) {
+        // Remove existing alerts
+        const existingAlert = document.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        // Create new alert
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Insert alert before form
+        contactForm.parentNode.insertBefore(alert, contactForm);
+        
+        // Auto-dismiss success alerts after 5 seconds
+        if (type === 'success') {
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    }
+    
+    // Character counter for message field
+    const messageField = document.getElementById('message');
+    const charCounter = document.createElement('div');
+    charCounter.className = 'form-text';
+    charCounter.style.textAlign = 'right';
+    messageField.parentNode.appendChild(charCounter);
+    
+    function updateCharCounter() {
+        const length = messageField.value.length;
+        charCounter.textContent = `${length} characters`;
+        
+        if (length < 10) {
+            charCounter.className = 'form-text text-danger';
+        } else if (length > 500) {
+            charCounter.className = 'form-text text-warning';
+        } else {
+            charCounter.className = 'form-text text-success';
+        }
+    }
+    
+    messageField.addEventListener('input', updateCharCounter);
+    updateCharCounter();
+    
+    // Live chat functionality
+    document.getElementById('startChat').addEventListener('click', function() {
+        // This would typically open a chat widget or redirect to a chat service
+        showAlert('Live chat will be available soon! Please use the contact form for now.', 'info');
+    });
+    
+    // Social link tracking (for analytics)
+    document.querySelectorAll('.social-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const platform = this.classList[1]; // Gets the platform class name
+            console.log(`Social link clicked: ${platform}`);
+            // Add your analytics tracking code here
+        });
+    });
+});
+</script>
+{% endblock %}

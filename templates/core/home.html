@@ -4,77 +4,177 @@
 {% block title %}MedPrep - MBBS Exam Preparation Platform{% endblock %}
 
 {% block extra_css %}
-<link href="{% static 'core/css/home.css' %}" rel="stylesheet">
+<link href="{% static 'core/css/home.css' %}?v=2025-final-navigation" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section bg-primary text-white py-5">
+<section class="hero-section bg-primary text-white py-5" id="hero">
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center min-vh-75">
             <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">
-                    Ace Your MBBS Exams with <span class="text-warning">MedPrep</span>
-                </h1>
-                <p class="lead mb-4">
-                    Comprehensive exam preparation platform designed specifically for MBBS students. 
-                    Practice with thousands of MCQs, access study materials, and track your progress.
-                </p>
-                <div class="d-flex gap-3">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'core:dashboard' %}" class="btn btn-warning btn-lg">
-                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
-                        </a>
-                        <a href="{% url 'core:question_bank' %}" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-book me-2"></i>Start Practicing
-                        </a>
-                    {% else %}
-                        <a href="{% url 'core:register' %}" class="btn btn-warning btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>Get Started Free
-                        </a>
-                        <a href="{% url 'core:login' %}" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </a>
-                    {% endif %}
+                <div class="hero-content-wrapper d-flex align-items-center">
+                    <!-- Animation moved to left side -->
+                    <div class="hero-animation-left me-4">
+                        <div class="hero-illustration-compact">
+                            <!-- Central Medical Icon -->
+                            <div class="central-icon-compact">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            
+                            <!-- Orbiting Medical Elements -->
+                            <div class="orbit-container-compact">
+                                <div class="orbit-element orbit-1">
+                                    <div class="orbit-icon-compact">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                </div>
+                                <div class="orbit-element orbit-2">
+                                    <div class="orbit-icon-compact">
+                                        <i class="fas fa-stethoscope"></i>
+                                    </div>
+                                </div>
+                                <div class="orbit-element orbit-3">
+                                    <div class="orbit-icon-compact">
+                                        <i class="fas fa-heartbeat"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content next to animation -->
+                    <div class="hero-content flex-grow-1">
+                        <h1 class="display-4 fw-bold mb-4 hero-title fade-in-up" data-delay="100">
+                            Ace Your MBBS Exams with <span class="text-orange">Confidence</span>
+                        </h1>
+                        <p class="lead mb-4 hero-subtitle fade-in-up" data-delay="200">
+                            Practice MCQs, Track Progress, and Improve Faster with our comprehensive 
+                            exam preparation platform designed specifically for MBBS students.
+                        </p>
+                        <div class="hero-buttons-container fade-in-up" data-delay="300">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'core:dashboard' %}" class="hero-btn cta-primary">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                                </a>
+                                <a href="{% url 'core:question_bank' %}" class="hero-btn cta-secondary">
+                                    <i class="fas fa-book me-2"></i>Start Practicing
+                                </a>
+                            {% else %}
+                                <a href="{% url 'core:signup' %}" class="hero-btn cta-primary hero-btn-orange">
+                                    <i class="fas fa-user-plus me-2"></i>Sign Up
+                                </a>
+                                <a href="{% url 'core:login' %}" class="hero-btn cta-secondary hero-btn-orange">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </a>
+                            {% endif %}
+                            <a href="#features" class="hero-btn cta-secondary">
+                                <i class="fas fa-rocket me-2"></i>Explore Features
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6 text-center">
-                <img src="{% static 'core/images/hero-medical.png' %}" alt="Medical Education" class="img-fluid" style="max-height: 400px;">
+                <!-- Keep the large animation on the right for larger screens -->
+                <div class="hero-image-large d-none d-lg-block fade-in-up" data-delay="400">
+                    <div class="hero-illustration">
+                        <!-- Central Medical Icon -->
+                        <div class="central-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        
+                        <!-- Orbiting Medical Elements -->
+                        <div class="orbit-container">
+                            <div class="orbit-element orbit-1">
+                                <div class="orbit-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                            </div>
+                            <div class="orbit-element orbit-2">
+                                <div class="orbit-icon">
+                                    <i class="fas fa-stethoscope"></i>
+                                </div>
+                            </div>
+                            <div class="orbit-element orbit-3">
+                                <div class="orbit-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                            </div>
+                            <div class="orbit-element orbit-4">
+                                <div class="orbit-icon">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                            </div>
+                            <div class="orbit-element orbit-5">
+                                <div class="orbit-icon">
+                                    <i class="fas fa-microscope"></i>
+                                </div>
+                            </div>
+                            <div class="orbit-element orbit-6">
+                                <div class="orbit-icon">
+                                    <i class="fas fa-syringe"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Background Glow Effects -->
+                        <div class="glow-effect glow-1"></div>
+                        <div class="glow-effect glow-2"></div>
+                        <div class="glow-effect glow-3"></div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <div class="hero-scroll-indicator">
+        <div class="scroll-down" title="Scroll to see more">
         </div>
     </div>
 </section>
 
 <!-- Stats Section -->
-<section class="stats-section py-5 bg-light">
+<section class="stats-section py-5 bg-light" id="stats">
     <div class="container">
         <div class="row text-center">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <i class="fas fa-book-open text-primary fs-1 mb-3"></i>
-                    <h3 class="fw-bold">{{ total_subjects }}+</h3>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card fade-in-up" data-delay="100">
+                    <i class="fas fa-book-open text-primary fs-1 mb-3 stat-icon"></i>
+                    <h3 class="fw-bold stat-number" data-target="{{ total_subjects }}" data-tooltip="Different medical subjects available">{{ total_subjects }}+</h3>
                     <p class="text-muted">Medical Subjects</p>
+                    <div class="stat-tooltip">
+                        Comprehensive coverage of all major medical subjects from basic sciences to clinical topics
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <i class="fas fa-question-circle text-success fs-1 mb-3"></i>
-                    <h3 class="fw-bold">{{ total_questions }}+</h3>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card fade-in-up" data-delay="200">
+                    <i class="fas fa-question-circle text-success fs-1 mb-3 stat-icon"></i>
+                    <h3 class="fw-bold stat-number" data-target="{{ total_questions }}" data-tooltip="High-quality MCQs for practice">{{ total_questions }}+</h3>
                     <p class="text-muted">Practice Questions</p>
+                    <div class="stat-tooltip">
+                        Carefully curated MCQs with detailed explanations to enhance your learning
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <i class="fas fa-users text-warning fs-1 mb-3"></i>
-                    <h3 class="fw-bold">{{ total_users }}+</h3>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card fade-in-up" data-delay="300">
+                    <i class="fas fa-users text-warning fs-1 mb-3 stat-icon"></i>
+                    <h3 class="fw-bold stat-number" data-target="{{ total_users }}" data-tooltip="Active medical students">{{ total_users }}+</h3>
                     <p class="text-muted">Students</p>
+                    <div class="stat-tooltip">
+                        Join a growing community of MBBS students preparing for their exams
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <i class="fas fa-trophy text-danger fs-1 mb-3"></i>
-                    <h3 class="fw-bold">95%</h3>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card fade-in-up" data-delay="400">
+                    <i class="fas fa-trophy text-danger fs-1 mb-3 stat-icon"></i>
+                    <h3 class="fw-bold stat-number" data-target="95" data-tooltip="Students who improved their scores">95%</h3>
                     <p class="text-muted">Success Rate</p>
+                    <div class="stat-tooltip">
+                        Percentage of students who significantly improved their exam performance
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,73 +182,73 @@
 </section>
 
 <!-- Features Section -->
-<section class="features-section py-5">
+<section class="features-section py-5" id="features">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Why Choose MedPrep?</h2>
-                <p class="lead text-muted">Everything you need to succeed in your MBBS exams</p>
+                <h2 class="display-5 fw-bold mb-3 fade-in-up" data-delay="100">Why Choose MedPrep?</h2>
+                <p class="lead text-muted fade-in-up" data-delay="200">Everything you need to succeed in your MBBS exams</p>
             </div>
         </div>
         
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="feature-card text-center p-4 fade-in-up" data-delay="100">
+                    <div class="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 pulse-icon" style="width: 80px; height: 80px;">
                         <i class="fas fa-brain fs-3"></i>
                     </div>
                     <h4>Smart MCQ Practice</h4>
-                    <p class="text-muted">Practice with carefully curated MCQs organized by subject, topic, and difficulty level.</p>
+                    <p class="text-muted">Practice with carefully curated MCQs organized by subject, topic, and difficulty level with instant feedback.</p>
                 </div>
             </div>
             
             <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="feature-card text-center p-4 fade-in-up" data-delay="200">
+                    <div class="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 pulse-icon" style="width: 80px; height: 80px;">
                         <i class="fas fa-chart-line fs-3"></i>
                     </div>
                     <h4>Performance Tracking</h4>
-                    <p class="text-muted">Monitor your progress with detailed analytics and performance insights.</p>
+                    <p class="text-muted">Monitor your progress with detailed analytics, performance insights, and personalized recommendations.</p>
                 </div>
             </div>
             
             <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="feature-card text-center p-4 fade-in-up" data-delay="300">
+                    <div class="feature-icon bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 pulse-icon" style="width: 80px; height: 80px;">
                         <i class="fas fa-clock fs-3"></i>
                     </div>
-                    <h4>Timed Quizzes</h4>
-                    <p class="text-muted">Simulate real exam conditions with customizable timed quiz sessions.</p>
+                    <h4>Timed Mock Exams</h4>
+                    <p class="text-muted">Simulate real exam conditions with customizable timed quiz sessions and comprehensive result analysis.</p>
                 </div>
             </div>
             
             <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="feature-card text-center p-4 fade-in-up" data-delay="400">
+                    <div class="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 pulse-icon" style="width: 80px; height: 80px;">
                         <i class="fas fa-book fs-3"></i>
                     </div>
                     <h4>Study Resources</h4>
-                    <p class="text-muted">Access comprehensive notes, flashcards, and video lectures for all subjects.</p>
+                    <p class="text-muted">Access comprehensive notes, flashcards, and video lectures organized by subjects and topics.</p>
                 </div>
             </div>
             
             <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="feature-card text-center p-4 fade-in-up" data-delay="500">
+                    <div class="feature-icon bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 pulse-icon" style="width: 80px; height: 80px;">
                         <i class="fas fa-lightbulb fs-3"></i>
                     </div>
                     <h4>Detailed Explanations</h4>
-                    <p class="text-muted">Learn from detailed explanations for every question to strengthen your understanding.</p>
+                    <p class="text-muted">Learn from detailed explanations for every question to strengthen your understanding and retention.</p>
                 </div>
             </div>
             
             <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon bg-purple text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="feature-card text-center p-4 fade-in-up" data-delay="600">
+                    <div class="feature-icon bg-purple text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 pulse-icon" style="width: 80px; height: 80px;">
                         <i class="fas fa-medal fs-3"></i>
                     </div>
-                    <h4>Leaderboard</h4>
-                    <p class="text-muted">Compete with fellow students and track your ranking on the global leaderboard.</p>
+                    <h4>Global Leaderboard</h4>
+                    <p class="text-muted">Compete with fellow students and track your ranking on the global leaderboard for motivation.</p>
                 </div>
             </div>
         </div>
@@ -156,26 +256,29 @@
 </section>
 
 <!-- Subjects Section -->
-<section class="subjects-section py-5 bg-light">
+<section class="subjects-section py-5 bg-light" id="subjects">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Featured Subjects</h2>
-                <p class="lead text-muted">Start practicing with our most popular medical subjects</p>
+                <h2 class="display-5 fw-bold mb-3 fade-in-up" data-delay="100">Featured Subjects</h2>
+                <p class="lead text-muted fade-in-up" data-delay="200">Start practicing with our most popular medical subjects</p>
             </div>
         </div>
         
         <div class="row g-4">
             {% for subject in featured_subjects %}
             <div class="col-md-4">
-                <div class="subject-card card h-100 shadow-sm">
+                <div class="subject-card card h-100 shadow-sm fade-in-up" data-delay="{{ forloop.counter|add:100 }}">
                     <div class="card-body">
+                        <div class="subject-icon mb-3">
+                            <i class="fas fa-{{ subject.icon|default:'book-medical' }} fs-2 text-primary"></i>
+                        </div>
                         <h5 class="card-title">{{ subject.name }}</h5>
                         <p class="text-muted">{{ subject.code }}</p>
                         <p class="card-text">{{ subject.description|truncatewords:15 }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">{{ subject.year_applicable }} Year</small>
-                            <a href="{% url 'core:subject_detail' subject.pk %}" class="btn btn-primary btn-sm">
+                            <a href="{% url 'core:subject_detail' subject.pk %}" class="btn btn-primary btn-sm subject-btn">
                                 Explore <i class="fas fa-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -183,14 +286,17 @@
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">No subjects available at the moment.</p>
+            <div class="col-12 text-center fade-in-up" data-delay="100">
+                <div class="empty-state">
+                    <i class="fas fa-book-open fs-1 text-muted mb-3"></i>
+                    <p class="text-muted">No subjects available at the moment. Check back soon!</p>
+                </div>
             </div>
             {% endfor %}
         </div>
         
         {% if featured_subjects %}
-        <div class="text-center mt-4">
+        <div class="text-center mt-5 fade-in-up" data-delay="300">
             <a href="{% url 'core:question_bank' %}" class="btn btn-outline-primary btn-lg">
                 View All Subjects <i class="fas fa-arrow-right ms-2"></i>
             </a>
@@ -200,36 +306,60 @@
 </section>
 
 <!-- CTA Section -->
-<section class="cta-section py-5 bg-primary text-white">
+<section class="cta-section py-5 bg-primary text-white" id="cta">
     <div class="container text-center">
-        <h2 class="display-5 fw-bold mb-3">Ready to Start Your Journey?</h2>
-        <p class="lead mb-4">Join thousands of MBBS students who are already using MedPrep to excel in their exams.</p>
-        
-        {% if not user.is_authenticated %}
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'core:register' %}" class="btn btn-warning btn-lg">
-                <i class="fas fa-rocket me-2"></i>Get Started Free
-            </a>
-            <a href="{% url 'core:subscription' %}" class="btn btn-outline-light btn-lg">
-                <i class="fas fa-crown me-2"></i>View Premium Plans
-            </a>
-        </div>
-        {% else %}
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'core:question_bank' %}" class="btn btn-warning btn-lg">
-                <i class="fas fa-play me-2"></i>Start Practicing Now
-            </a>
-            {% if not user_profile.is_premium_active %}
-            <a href="{% url 'core:subscription' %}" class="btn btn-outline-light btn-lg">
-                <i class="fas fa-crown me-2"></i>Upgrade to Premium
-            </a>
+        <div class="cta-content fade-in-up scale-in" data-delay="100">
+            <h2 class="display-5 fw-bold mb-3">Ready to Start Your Journey?</h2>
+            <p class="lead mb-4">Join thousands of MBBS students who are already using MedPrep to excel in their exams.</p>
+            
+            {% if not user.is_authenticated %}
+            <div class="cta-buttons fade-in-up" data-delay="200">
+                <a href="{% url 'core:signup' %}" class="cta-primary cta-pulse">
+                    <i class="fas fa-rocket me-2"></i>Get Started Free
+                </a>
+                <a href="{% url 'core:subscription' %}" class="cta-secondary">
+                    <i class="fas fa-crown me-2"></i>View Premium Plans
+                </a>
+            </div>
+            {% else %}
+            <div class="cta-buttons fade-in-up" data-delay="200">
+                <a href="{% url 'core:question_bank' %}" class="cta-primary cta-pulse">
+                    <i class="fas fa-play me-2"></i>Start Practicing Now
+                </a>
+                {% if not user_profile.is_premium_active %}
+                <a href="{% url 'core:subscription' %}" class="cta-secondary">
+                    <i class="fas fa-crown me-2"></i>Upgrade to Premium
+                </a>
+                {% endif %}
+            </div>
             {% endif %}
         </div>
-        {% endif %}
+        
+        <!-- Trust indicators -->
+        <div class="trust-indicators mt-5 fade-in-up" data-delay="300">
+            <div class="row justify-content-center">
+                <div class="col-md-3 text-center">
+                    <i class="fas fa-shield-alt fs-3 mb-2 trust-icon"></i>
+                    <p class="small">Secure & Safe</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <i class="fas fa-mobile-alt fs-3 mb-2 trust-icon"></i>
+                    <p class="small">Mobile Friendly</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <i class="fas fa-clock fs-3 mb-2 trust-icon"></i>
+                    <p class="small">24/7 Access</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <i class="fas fa-heart fs-3 mb-2 trust-icon"></i>
+                    <p class="small">Student First</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'core/js/home.js' %}"></script>
+<script src="{% static 'core/js/home.js' %}?v=2025-color-scheme"></script>
 {% endblock %}

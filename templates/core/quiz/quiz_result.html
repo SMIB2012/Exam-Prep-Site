@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quiz Results - {{ quiz_session.topic.name }} | MedPrep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/quiz.css' %}?v={{ CACHE_BUSTER }}">
+{% endblock %}
+
+{% block content %}
+<div class="quiz-results-container">
+    <!-- Results Header -->
+    <div class="results-header">
+        <div class="results-header-content">
+            <div class="results-icon">
+                {% if quiz_session.score >= 80 %}
+                    <i class="fas fa-trophy text-warning"></i>
+                {% elif quiz_session.score >= 60 %}
+                    <i class="fas fa-medal text-success"></i>
+                {% else %}
+                    <i class="fas fa-graduation-cap text-primary"></i>
+                {% endif %}
+            </div>
+            <div class="results-info">
+                <h1 class="results-title">Quiz Complete!</h1>
+                <h2 class="quiz-topic">{{ quiz_session.topic.name }}</h2>
+                <p class="quiz-subject">{{ quiz_session.topic.subject.name }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Summary -->
+    <div class="score-summary">
+        <div class="score-card main-score">
+            <div class="score-circle">
+                <div class="circle-progress" data-score="{{ quiz_session.score }}">
+                    <div class="circle-fill"></div>
+                    <div class="circle-content">
+                        <div class="score-value">{{ quiz_session.score }}%</div>
+                        <div class="score-label">Final Score</div>
+                    </div>
+                </div>
+            </div>
+            <div class="score-grade">
+                <span class="grade-letter grade-{{ quiz_session.grade|lower }}">{{ quiz_session.grade }}</span>
+                <span class="grade-text">{{ quiz_session.get_grade_text }}</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle text-success"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ quiz_session.correct_answers }}</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-times-circle text-danger"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ quiz_session.incorrect_answers }}</div>
+                    <div class="stat-label">Incorrect</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-question-circle text-muted"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ quiz_session.unanswered_count }}</div>
+                    <div class="stat-label">Unanswered</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock text-info"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ quiz_session.time_taken }}</div>
+                    <div class="stat-label">Time Taken</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Analysis -->
+    <div class="performance-analysis">
+        <h3>Performance Analysis</h3>
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <h4>Difficulty Breakdown</h4>
+                <div class="difficulty-stats">
+                    {% for difficulty, stats in difficulty_breakdown.items %}
+                    <div class="difficulty-item">
+                        <div class="difficulty-header">
+                            <span class="difficulty-name difficulty-{{ difficulty|lower }}">{{ difficulty }}</span>
+                            <span class="difficulty-score">{{ stats.score }}%</span>
+                        </div>
+                        <div class="difficulty-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ stats.score }}%"></div>
+                            </div>
+                        </div>
+                        <div class="difficulty-details">
+                            {{ stats.correct }}/{{ stats.total }} correct
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="analysis-card">
+                <h4>Topic Performance</h4>
+                <div class="topic-stats">
+                    {% for topic_stat in topic_performance %}
+                    <div class="topic-item">
+                        <div class="topic-header">
+                            <span class="topic-name">{{ topic_stat.topic }}</span>
+                            <span class="topic-score">{{ topic_stat.score }}%</span>
+                        </div>
+                        <div class="topic-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ topic_stat.score }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Review -->
+    <div class="question-review">
+        <div class="review-header">
+            <h3>Question Review</h3>
+            <div class="review-filters">
+                <button class="btn btn-sm btn-outline-secondary active" data-filter="all">All</button>
+                <button class="btn btn-sm btn-outline-success" data-filter="correct">Correct</button>
+                <button class="btn btn-sm btn-outline-danger" data-filter="incorrect">Incorrect</button>
+                <button class="btn btn-sm btn-outline-warning" data-filter="unanswered">Unanswered</button>
+            </div>
+        </div>
+
+        <div class="questions-list">
+            {% for answer in quiz_session.answers.all %}
+            <div class="question-review-item status-{{ answer.get_status_class }}" data-status="{{ answer.get_status_class }}">
+                <div class="question-header">
+                    <div class="question-number">Q{{ forloop.counter }}</div>
+                    <div class="question-status">
+                        {% if answer.is_correct %}
+                            <i class="fas fa-check text-success"></i>
+                        {% elif answer.selected_option %}
+                            <i class="fas fa-times text-danger"></i>
+                        {% else %}
+                            <i class="fas fa-minus text-muted"></i>
+                        {% endif %}
+                    </div>
+                    <div class="question-difficulty difficulty-{{ answer.question.difficulty|lower }}">
+                        {{ answer.question.get_difficulty_display }}
+                    </div>
+                </div>
+
+                <div class="question-content">
+                    <h4 class="question-text">{{ answer.question.question_text|safe }}</h4>
+                    
+                    <div class="answer-options">
+                        {% for option in answer.question.options.all %}
+                        <div class="option-item 
+                                    {% if option.is_correct %}correct{% endif %}
+                                    {% if option == answer.selected_option %}selected{% endif %}">
+                            <div class="option-letter">{{ forloop.counter|add:64|chr }}</div>
+                            <div class="option-text">{{ option.option_text|safe }}</div>
+                            <div class="option-indicators">
+                                {% if option.is_correct %}
+                                    <i class="fas fa-check text-success" title="Correct Answer"></i>
+                                {% endif %}
+                                {% if option == answer.selected_option %}
+                                    <i class="fas fa-user text-primary" title="Your Answer"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if answer.question.explanation %}
+                    <div class="question-explanation">
+                        <h5>Explanation:</h5>
+                        <p>{{ answer.question.explanation|safe }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="results-actions">
+        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <a href="{% url 'core:quiz_list' %}" class="btn btn-outline-primary">
+            <i class="fas fa-eye"></i> Review Mistakes
+        </a>
+        
+        <a href="{% url 'core:question_bank' %}" class="btn btn-primary">
+            <i class="fas fa-redo"></i> Retake Quiz
+        </a>
+        
+        {% if quiz_session.topic.resources.exists %}
+        <a href="{% url 'core:resources' %}" class="btn btn-success">
+            <i class="fas fa-book"></i> Continue to Study Materials
+        </a>
+        {% endif %}
+        
+        <button class="btn btn-info" onclick="window.print()">
+            <i class="fas fa-print"></i> Print Results
+        </button>
+        
+        <button class="btn btn-secondary" id="shareResults">
+            <i class="fas fa-share"></i> Share
+        </button>
+    </div>
+
+    <!-- Congratulations/Encouragement Message -->
+    <div class="motivational-message">
+        {% if quiz_session.score >= 90 %}
+            <div class="message-card success">
+                <i class="fas fa-star"></i>
+                <h4>Excellent Work!</h4>
+                <p>Outstanding performance! You've mastered this topic. Keep up the great work!</p>
+            </div>
+        {% elif quiz_session.score >= 70 %}
+            <div class="message-card good">
+                <i class="fas fa-thumbs-up"></i>
+                <h4>Great Job!</h4>
+                <p>You're doing well! Review the incorrect answers and you'll be ready for the next level.</p>
+            </div>
+        {% elif quiz_session.score >= 50 %}
+            <div class="message-card fair">
+                <i class="fas fa-chart-line"></i>
+                <h4>Good Progress!</h4>
+                <p>You're on the right track. Focus on the areas that need improvement and keep practicing.</p>
+            </div>
+        {% else %}
+            <div class="message-card needs-work">
+                <i class="fas fa-book-open"></i>
+                <h4>Keep Learning!</h4>
+                <p>Don't give up! Review the study materials and try again. Every expert was once a beginner.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate score circle
+    const scoreCircle = document.querySelector('.circle-progress');
+    const score = parseInt(scoreCircle.dataset.score);
+    const fill = scoreCircle.querySelector('.circle-fill');
+    
+    setTimeout(() => {
+        fill.style.strokeDasharray = `${score * 2.51}, 251`;
+    }, 500);
+    
+    // Filter questions
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const questionItems = document.querySelectorAll('.question-review-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter questions
+            questionItems.forEach(item => {
+                if (filter === 'all' || item.dataset.status === filter) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Share functionality
+    document.getElementById('shareResults').addEventListener('click', function() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Quiz Results',
+                text: `I scored ${score}% on the {{ quiz_session.topic.name }} quiz!`,
+                url: window.location.href
+            });
+        } else {
+            // Fallback - copy to clipboard
+            const text = `I scored ${score}% on the {{ quiz_session.topic.name }} quiz! Check out MedPrep for medical exam preparation.`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Results copied to clipboard!');
+            });
+        }
+    });
+    
+    // Print styles
+    const printStyles = `
+        @media print {
+            .results-actions, .review-filters { display: none !important; }
+            .question-review-item { page-break-inside: avoid; }
+            .score-summary { page-break-after: avoid; }
+        }
+    `;
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = printStyles;
+    document.head.appendChild(styleSheet);
+});
+</script>
+{% endblock %}

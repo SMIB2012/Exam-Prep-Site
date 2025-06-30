@@ -34,7 +34,7 @@ class UserRegistrationForm(UserCreationForm):
     )
     college_name = forms.CharField(
         max_length=200,
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     phone_number = forms.CharField(

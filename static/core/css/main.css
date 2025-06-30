@@ -1,45 +1,499 @@
-/* MedPrep Main Styles */
+/* MedPrep Main Styles - Complete Color Scheme Implementation */
 
-/* Custom Colors */
+/* Custom Colors - Medical Theme */
 :root {
-    --primary-color: #0d6efd;
-    --secondary-color: #6c757d;
-    --success-color: #198754;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
-    --info-color: #0dcaf0;
-    --purple-color: #6f42c1;
-    --dark-color: #212529;
-    --light-color: #f8f9fa;
+    /* Primary Colors */
+    --primary-blue: #3b82f6;
+    --primary-green: #10b981;
+    --primary-white: #ffffff;
+    
+    /* Accent Colors */
+    --accent-orange: #f97316;
+    --accent-gray: #6b7280;
+    --accent-navy: #1e3a8a;
+    
+    /* Secondary Colors (for gradients) */
+    --secondary-blue: #1d4ed8;
+    --secondary-green: #059669;
+    --primary-orange: #f97316;
+    --accent-gold: #fbbf24;
+    
+    /* Additional Color Aliases for Template Compatibility */
+    --text-dark: #374151;
+    --text-muted: #6b7280;
+    --light-gray: #e5e7eb;
+    --medium-gray: #9ca3af;
+    --light-background: #f9fafb;
+    
+    /* Color Variations */
+    --blue-light: #93c5fd;
+    --blue-dark: #1d4ed8;
+    --green-light: #6ee7b7;
+    --green-dark: #059669;
+    --orange-light: #fed7aa;
+    --orange-dark: #ea580c;
+    --gray-light: #f3f4f6;
+    --gray-dark: #374151;
+    --navy-light: #3b82f6;
+    --navy-dark: #1e3a8a;
+    
+    /* Text Colors */
+    --text-primary: #374151;
+    --text-secondary: #6b7280;
+    --text-light: #9ca3af;
+    --text-white: #ffffff;
+    
+    /* Background Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-light-blue: #eff6ff;
+    --bg-light-green: #ecfdf5;
+    --bg-navy: #1e3a8a;
+    --bg-dark-navy: #1e40af;
+    
+    /* Button Colors */
+    --btn-primary-bg: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --btn-primary-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --btn-secondary-bg: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    --btn-secondary-hover: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+    --btn-success-bg: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --btn-success-hover: linear-gradient(135deg, #059669 0%, #047857 100%);
+    
+    /* Border Colors */
+    --border-light: #e5e7eb;
+    --border-medium: #d1d5db;
+    --border-dark: #9ca3af;
+    --border-blue: #3b82f6;
+    --border-green: #10b981;
+    --border-orange: #f97316;
 }
 
-/* Global Styles */
+/* Global Page Backgrounds */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
-.bg-purple {
-    background-color: var(--purple-color) !important;
+/* Navigation - Dark Navy Theme */
+.navbar {
+    background: var(--bg-navy) !important;
+    border-bottom: 2px solid var(--accent-orange);
 }
 
-.text-purple {
-    color: var(--purple-color) !important;
-}
-
-/* Navigation */
 .navbar-brand {
     font-size: 1.5rem;
     font-weight: 700;
+    color: var(--text-white) !important;
 }
 
 .navbar-nav .nav-link {
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.9) !important;
     transition: all 0.3s ease;
 }
 
 .navbar-nav .nav-link:hover {
+    color: var(--text-white) !important;
     transform: translateY(-1px);
+}
+
+/* Header Authentication Buttons */
+.header-auth-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.5rem 1rem !important;
+    margin-left: 0.5rem !important;
+    background: var(--btn-primary-bg) !important;
+    border: 1px solid var(--primary-blue) !important;
+    border-radius: 0.375rem !important;
+    color: var(--text-white) !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    min-width: 70px !important;
+    text-align: center !important;
+}
+
+.header-auth-btn:hover,
+.header-auth-btn:focus {
+    background: var(--btn-primary-hover) !important;
+    color: var(--text-white) !important;
+    text-decoration: none !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Universal Button Styles */
+.btn-primary {
+    background: var(--btn-primary-bg) !important;
+    border-color: var(--primary-blue) !important;
+    color: var(--text-white) !important;
+}
+
+.btn-primary:hover {
+    background: var(--btn-primary-hover) !important;
+    border-color: var(--blue-dark) !important;
+    color: var(--text-white) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+    background: var(--btn-secondary-bg) !important;
+    border-color: var(--accent-orange) !important;
+    color: var(--text-white) !important;
+}
+
+.btn-secondary:hover {
+    background: var(--btn-secondary-hover) !important;
+    border-color: var(--orange-dark) !important;
+    color: var(--text-white) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.btn-success {
+    background: var(--btn-success-bg) !important;
+    border-color: var(--primary-green) !important;
+    color: var(--text-white) !important;
+}
+
+.btn-success:hover {
+    background: var(--btn-success-hover) !important;
+    border-color: var(--green-dark) !important;
+    color: var(--text-white) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Landing Page Specific Styles */
+.homepage-body {
+    background: var(--bg-primary);
+}
+
+.homepage-body .hero-section {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+}
+
+.homepage-body .hero-btn-primary {
+    background: var(--btn-primary-bg) !important;
+    color: var(--text-white) !important;
+    border-color: var(--primary-blue) !important;
+}
+
+.homepage-body .hero-btn-secondary {
+    background: var(--btn-secondary-bg) !important;
+    color: var(--text-white) !important;
+    border-color: var(--accent-orange) !important;
+}
+
+/* Dashboard Page Styles */
+.dashboard-page {
+    background: var(--bg-secondary);
+}
+
+.dashboard-page .sidebar {
+    background: var(--bg-navy);
+    color: var(--text-white);
+}
+
+.dashboard-page .main-content {
+    background: var(--bg-primary);
+}
+
+.dashboard-page .progress-bar {
+    background: var(--primary-green) !important;
+}
+
+.dashboard-page .card {
+    border: 1px solid var(--border-light);
+    background: var(--bg-primary);
+}
+
+.dashboard-page .card-header {
+    background: var(--bg-light-blue);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* Question Bank Page Styles */
+.question-bank-page {
+    background: var(--bg-primary);
+}
+
+.question-bank-page .category-header {
+    color: var(--accent-navy);
+    font-weight: 700;
+}
+
+.question-bank-page .search-bar input {
+    border: 2px solid var(--border-light);
+    background: var(--bg-primary);
+}
+
+.question-bank-page .search-bar input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.question-bank-page .filter-controls {
+    background: var(--bg-light-green);
+    border: 1px solid var(--border-light);
+}
+
+/* Quiz/Practice Page Styles */
+.quiz-page {
+    background: var(--bg-primary);
+}
+
+.quiz-page .timer {
+    background: var(--primary-green);
+    color: var(--text-white);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+}
+
+.quiz-page .question-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+}
+
+.quiz-page .answer-choice {
+    background: var(--bg-primary);
+    border: 2px solid var(--border-light);
+    color: var(--text-primary);
+}
+
+.quiz-page .answer-choice:hover {
+    border-color: var(--primary-blue);
+    background: var(--bg-light-blue);
+}
+
+.quiz-page .answer-choice.selected {
+    border-color: var(--primary-blue);
+    background: var(--bg-light-blue);
+}
+
+.quiz-page .navigation-controls {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-top: 1px solid var(--border-light);
+}
+
+/* Results Page Styles */
+.results-page {
+    background: var(--bg-primary);
+}
+
+.results-page .score-display.passing {
+    background: var(--primary-green);
+    color: var(--text-white);
+}
+
+.results-page .score-display.failing {
+    background: var(--danger-color);
+    color: var(--text-white);
+}
+
+.results-page .explanation-text {
+    color: var(--text-primary);
+}
+
+.results-page .progress-summary {
+    background: var(--bg-light-green);
+    border: 1px solid var(--primary-green);
+}
+
+/* Study Resources Page Styles */
+.resources-page {
+    background: var(--bg-secondary);
+}
+
+.resources-page .section-title {
+    color: var(--accent-navy);
+    font-weight: 700;
+}
+
+.resources-page .resource-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+}
+
+.resources-page .resource-card:hover {
+    border-color: var(--primary-blue);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.resources-page .interactive-element {
+    color: var(--accent-orange);
+}
+
+/* Leaderboard Page Styles */
+.leaderboard-page {
+    background: var(--bg-primary);
+}
+
+.leaderboard-page .leaderboard-table {
+    background: var(--bg-primary);
+}
+
+.leaderboard-page .leaderboard-table tr:nth-child(even) {
+    background: var(--bg-secondary);
+}
+
+.leaderboard-page .top-performer {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--green-dark) 100%);
+    color: var(--text-white);
+}
+
+/* Subscription Page Styles */
+.subscription-page {
+    background: var(--bg-light-blue);
+}
+
+.subscription-page .plan-header {
+    color: var(--accent-navy);
+    font-weight: 700;
+}
+
+.subscription-page .plan-card {
+    background: var(--bg-primary);
+    border: 2px solid var(--border-light);
+}
+
+.subscription-page .plan-card.featured {
+    border-color: var(--primary-blue);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.subscription-page .feature-highlight {
+    color: var(--accent-orange);
+}
+
+.subscription-page .pricing-text {
+    color: var(--text-primary);
+}
+
+/* About/Contact Page Styles */
+.about-page, .contact-page {
+    background: var(--bg-primary);
+}
+
+.about-page .heading, .contact-page .heading {
+    color: var(--accent-navy);
+}
+
+.about-page .content-text, .contact-page .content-text {
+    color: var(--text-primary);
+}
+
+.contact-page .contact-form input,
+.contact-page .contact-form textarea {
+    border: 2px solid var(--border-light);
+    background: var(--bg-primary);
+}
+
+.contact-page .contact-form input:focus,
+.contact-page .contact-form textarea:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Terms/Privacy/FAQ Page Styles */
+.legal-page, .faq-page {
+    background: var(--bg-primary);
+}
+
+.legal-page .content-text, .faq-page .content-text {
+    color: var(--text-primary);
+}
+
+.legal-page a, .faq-page a {
+    color: var(--primary-blue);
+}
+
+.legal-page a:hover, .faq-page a:hover {
+    color: var(--blue-dark);
+    text-decoration: underline;
+}
+
+.faq-page .faq-header {
+    color: var(--accent-navy);
+}
+
+.faq-page .search-bar {
+    background: var(--primary-blue);
+}
+
+.faq-page .question-link {
+    color: var(--accent-orange);
+}
+
+/* Admin Panel Styles */
+.admin-page {
+    background: var(--bg-secondary);
+}
+
+.admin-page .sidebar {
+    background: var(--accent-navy);
+    color: var(--text-white);
+}
+
+.admin-page .admin-content {
+    background: var(--bg-primary);
+}
+
+.admin-page .admin-btn {
+    background: var(--btn-primary-bg);
+    color: var(--text-white);
+}
+
+.admin-page .admin-alert {
+    background: var(--accent-orange);
+    color: var(--text-white);
+}
+
+/* Utility Classes */
+.text-blue { color: var(--primary-blue) !important; }
+.text-green { color: var(--primary-green) !important; }
+.text-orange { color: var(--accent-orange) !important; }
+.text-navy { color: var(--accent-navy) !important; }
+.text-gray { color: var(--accent-gray) !important; }
+
+.bg-blue { background-color: var(--primary-blue) !important; }
+.bg-green { background-color: var(--primary-green) !important; }
+.bg-orange { background-color: var(--accent-orange) !important; }
+.bg-navy { background-color: var(--accent-navy) !important; }
+.bg-light-blue { background-color: var(--bg-light-blue) !important; }
+.bg-light-green { background-color: var(--bg-light-green) !important; }
+
+.border-blue { border-color: var(--primary-blue) !important; }
+.border-green { border-color: var(--primary-green) !important; }
+.border-orange { border-color: var(--accent-orange) !important; }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .header-auth-btn {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.8rem !important;
+        min-width: 60px !important;
+    }
+}
+
+.navbar-nav .nav-item .header-auth-btn:hover,
+.navbar-nav .nav-item .header-auth-btn:focus {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+    color: white !important;
+    text-decoration: none !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Cards */

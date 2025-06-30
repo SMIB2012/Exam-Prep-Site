@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Question Bank - MedPrep{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'core/css/quiz.css' %}?v=1.1" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="question-bank-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-sm me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0">
+                        <i class="fas fa-question-circle text-success me-3"></i>
+                        Question Bank
+                    </h1>
+                </div>
+                <p class="lead mb-0">
+                    Practice with thousands of carefully curated MCQs organized by subject and difficulty level.
+                </p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="stats-badge bg-white text-primary p-3 rounded-3 d-inline-block">
+                    <div class="fw-bold fs-4">{{ subjects.count }}+</div>
+                    <div class="small">Subjects Available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom-0">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-filter me-2"></i>Filter Questions
+                    </h5>
+                </div>
+                <div class="card-body bg-light">
+                    <form method="get" class="filter-form">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold text-navy">Year</label>
+                                <select name="year" class="form-select quiz-select">
+                                    <option value="">All Years</option>
+                                    {% for value, label in year_choices %}
+                                        <option value="{{ value }}" {% if selected_year == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold text-navy">Subject</label>
+                                <select name="subject" class="form-select quiz-select" id="subjectSelect">
+                                    <option value="">All Subjects</option>
+                                    {% for subject in subjects %}
+                                        <option value="{{ subject.id }}" {% if selected_subject_id == subject.id %}selected{% endif %}>
+                                            {{ subject.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold text-navy">Topic</label>
+                                <select name="topic" class="form-select quiz-select" id="topicSelect">
+                                    <option value="">All Topics</option>
+                                    {% for topic in topics %}
+                                        <option value="{{ topic.id }}" {% if selected_topic_id == topic.id %}selected{% endif %}>
+                                            {{ topic.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold text-navy">Difficulty</label>
+                                <select name="difficulty" class="form-select quiz-select">
+                                    <option value="">All Levels</option>
+                                    {% for value, label in difficulty_choices %}
+                                        <option value="{{ value }}" {% if selected_difficulty == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-search me-2"></i>Apply Filters
+                                </button>
+                                <a href="{% url 'core:question_bank' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-2"></i>Clear
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subjects Grid -->
+    <div class="row g-4">
+        {% for subject in subjects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="subject-card card h-100 border-0 shadow-sm hover-lift">
+                <div class="card-header bg-gradient-primary text-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold">{{ subject.name }}</h6>
+                        <div class="subject-icon">
+                            <i class="fas fa-book text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="subject-stats mb-3">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number text-success fw-bold">{{ subject.topic_count }}</div>
+                                    <div class="stat-label text-muted small">Topics</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number text-primary fw-bold">{{ subject.question_count }}</div>
+                                    <div class="stat-label text-muted small">Questions</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if subject.year_applicable != 'all' %}
+                    <div class="mb-3">
+                        <span class="badge bg-orange text-white">
+                            <i class="fas fa-calendar me-1"></i>{{ subject.get_year_applicable_display }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:subject_detail' subject.pk %}" class="btn btn-primary">
+                            <i class="fas fa-play me-2"></i>Start Practice
+                        </a>
+                        <a href="{% url 'core:topic_detail' subject.topics.first.pk %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-list me-2"></i>View Topics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-search text-muted display-1 mb-4"></i>
+                <h3 class="text-muted mb-3">No Subjects Found</h3>
+                <p class="text-muted mb-4">
+                    No subjects match your current filters. Try adjusting your search criteria.
+                </p>
+                <a href="{% url 'core:question_bank' %}" class="btn btn-primary">
+                    <i class="fas fa-refresh me-2"></i>Clear Filters
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.question-bank-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+}
+
+.subject-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.subject-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+.subject-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+}
+
+.stats-badge {
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.filter-form .form-select {
+    border: 2px solid var(--light-gray);
+    border-radius: 8px;
+}
+
+.filter-form .form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(34, 139, 202, 0.25);
+}
+
+.empty-state {
+    background: var(--light-background);
+    border-radius: 15px;
+    margin: 2rem 0;
+}
+
+.hover-lift {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit form when filters change
+    const filterSelects = document.querySelectorAll('.filter-form select');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+    
+    // Subject-topic dependency
+    const subjectSelect = document.getElementById('subjectSelect');
+    const topicSelect = document.getElementById('topicSelect');
+    
+    if (subjectSelect && topicSelect) {
+        subjectSelect.addEventListener('change', function() {
+            const subjectId = this.value;
+            if (subjectId) {
+                // In a real implementation, this would fetch topics via AJAX
+                // For now, we'll just clear the topic selection
+                topicSelect.value = '';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

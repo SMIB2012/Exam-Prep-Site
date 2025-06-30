@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Leaderboard - MedPrep{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'core/css/leaderboard.css' %}?v=1.0" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="leaderboard-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-sm me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <h1 class="display-5 fw-bold mb-0">
+                        <i class="fas fa-trophy text-warning me-3"></i>
+                        Leaderboard
+                    </h1>
+                </div>
+                <p class="lead mb-0">
+                    Compete with fellow MBBS students and track your performance rankings.
+                </p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="rank-badge bg-white text-primary p-3 rounded-3 d-inline-block">
+                    <div class="fw-bold fs-4">#{{ user_rank|default:"--" }}</div>
+                    <div class="small">Your Rank</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Leaderboard Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-pills justify-content-center" id="leaderboardTabs" role="tablist">
+                <li class="nav-item me-2" role="presentation">
+                    <button class="nav-link active" id="overall-tab" data-bs-toggle="pill" data-bs-target="#overall" type="button" role="tab">
+                        <i class="fas fa-crown me-2"></i>Overall Rankings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="weekly-tab" data-bs-toggle="pill" data-bs-target="#weekly" type="button" role="tab">
+                        <i class="fas fa-calendar-week me-2"></i>This Week
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-content" id="leaderboardTabsContent">
+        <!-- Overall Rankings Tab -->
+        <div class="tab-pane fade show active" id="overall" role="tabpanel">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Top 3 Podium -->
+                    {% if top_users %}
+                    <div class="podium-section mb-5">
+                        <div class="row justify-content-center">
+                            {% for user in top_users|slice:":3" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="podium-card rank-{{ forloop.counter }} text-center">
+                                    <div class="podium-position">
+                                        {% if forloop.counter == 1 %}
+                                            <i class="fas fa-crown text-warning"></i>
+                                        {% elif forloop.counter == 2 %}
+                                            <i class="fas fa-medal text-muted"></i>
+                                        {% else %}
+                                            <i class="fas fa-award text-orange"></i>
+                                        {% endif %}
+                                        <div class="position-number">#{{ forloop.counter }}</div>
+                                    </div>
+                                    <div class="user-avatar mb-3">
+                                        <div class="avatar-circle">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    </div>
+                                    <h5 class="user-name mb-2">{{ user.user.first_name|default:user.user.username }}</h5>
+                                    <div class="user-stats">
+                                        <div class="stat-item">
+                                            <div class="stat-value text-success">{{ user.total_quiz_score }}</div>
+                                            <div class="stat-label">Total Score</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-value text-primary">{{ user.total_quizzes_taken }}</div>
+                                            <div class="stat-label">Quizzes</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-value text-orange">{{ user.year_of_study }}</div>
+                                            <div class="stat-label">Year</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Full Rankings Table -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light border-bottom-0">
+                            <h5 class="mb-0 text-primary">
+                                <i class="fas fa-list me-2"></i>Complete Rankings
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th class="border-0 ps-4">Rank</th>
+                                            <th class="border-0">Student</th>
+                                            <th class="border-0">Year</th>
+                                            <th class="border-0">College</th>
+                                            <th class="border-0">Total Score</th>
+                                            <th class="border-0">Quizzes</th>
+                                            <th class="border-0">Avg Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in top_users %}
+                                        <tr class="{% if user.user == request.user %}table-warning{% endif %}">
+                                            <td class="ps-4">
+                                                <div class="rank-badge-small">
+                                                    {% if forloop.counter <= 3 %}
+                                                        <i class="fas fa-crown text-warning me-2"></i>
+                                                    {% endif %}
+                                                    #{{ forloop.counter }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="user-avatar-small me-3">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-semibold">{{ user.user.first_name|default:user.user.username }}</div>
+                                                        {% if user.user == request.user %}
+                                                            <small class="text-success">You</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-navy">{{ user.year_of_study }}</span>
+                                            </td>
+                                            <td class="text-muted">{{ user.college_name|truncatechars:20 }}</td>
+                                            <td>
+                                                <span class="fw-bold text-success">{{ user.total_quiz_score }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-primary">{{ user.total_quizzes_taken }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-orange fw-semibold">
+                                                    {% if user.total_quizzes_taken > 0 %}
+                                                        {{ user.total_quiz_score|floatformat:1 }}%
+                                                    {% else %}
+                                                        0%
+                                                    {% endif %}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-trophy text-muted display-3 mb-3"></i>
+                                                    <h5 class="text-muted">No rankings available yet</h5>
+                                                    <p class="text-muted">Be the first to start practicing and climb the leaderboard!</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Rankings Tab -->
+        <div class="tab-pane fade" id="weekly" role="tabpanel">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light border-bottom-0">
+                            <h5 class="mb-0 text-primary">
+                                <i class="fas fa-calendar-week me-2"></i>This Week's Top Performers
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-success">
+                                        <tr>
+                                            <th class="border-0 ps-4">Rank</th>
+                                            <th class="border-0">Student</th>
+                                            <th class="border-0">Weekly Score</th>
+                                            <th class="border-0">Quizzes This Week</th>
+                                            <th class="border-0">Progress</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for leader in weekly_leaders %}
+                                        <tr class="{% if leader.user.user == request.user %}table-warning{% endif %}">
+                                            <td class="ps-4">
+                                                <div class="rank-badge-small">
+                                                    {% if forloop.counter <= 3 %}
+                                                        <i class="fas fa-star text-warning me-2"></i>
+                                                    {% endif %}
+                                                    #{{ forloop.counter }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="user-avatar-small me-3">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-semibold">{{ leader.user.user.first_name|default:leader.user.user.username }}</div>
+                                                        {% if leader.user.user == request.user %}
+                                                            <small class="text-success">You</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-success">{{ leader.weekly_score }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-primary">{{ leader.weekly_quizzes }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="progress progress-sm">
+                                                    <div class="progress-bar bg-success" style="width: {{ leader.weekly_score|floatformat:0 }}%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center py-5">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-calendar-times text-muted display-3 mb-3"></i>
+                                                    <h5 class="text-muted">No activity this week</h5>
+                                                    <p class="text-muted">Start practicing to appear on this week's leaderboard!</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="cta-section bg-gradient-success text-white p-5 rounded-4">
+                <h3 class="mb-3">Ready to Climb the Leaderboard?</h3>
+                <p class="lead mb-4">Start practicing now and see your name among the top performers!</p>
+                <a href="{% url 'core:question_bank' %}" class="btn btn-warning btn-lg me-3">
+                    <i class="fas fa-play me-2"></i>Start Practice
+                </a>
+                <a href="{% url 'core:dashboard' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-chart-line me-2"></i>View Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate rank numbers on scroll
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+
+    // Observe podium cards
+    document.querySelectorAll('.podium-card').forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>
+<script src="{% static 'core/js/leaderboard.js' %}?v=2025"></script>
+{% endblock %}

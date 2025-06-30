@@ -14,16 +14,51 @@ from ..models import (
 
 
 class HomeView(TemplateView):
-    """Landing page"""
+    """Enhanced Landing page with comprehensive data"""
     template_name = 'core/home.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Get comprehensive statistics
+        total_subjects = Subject.objects.filter(is_active=True).count()
+        total_questions = Question.objects.filter(is_active=True).count()
+        total_users = UserProfile.objects.count()
+        
+        # Get featured subjects with better ordering
+        featured_subjects = Subject.objects.filter(
+            is_active=True
+        ).annotate(
+            question_count=Count('topics__questions', filter=Q(topics__questions__is_active=True))
+        ).order_by('-question_count', 'name')[:6]
+        
+        # Add subject icons mapping for better visual representation
+        subject_icons = {
+            'Anatomy': 'user-md',
+            'Physiology': 'heartbeat',
+            'Pathology': 'microscope',
+            'Pharmacology': 'pills',
+            'Medicine': 'stethoscope',
+            'Surgery': 'cut',
+            'Pediatrics': 'baby',
+            'Gynecology': 'female',
+            'Psychiatry': 'brain',
+            'Radiology': 'x-ray',
+            'Biochemistry': 'flask',
+            'Microbiology': 'bacteria'
+        }
+        
+        # Assign icons to subjects
+        for subject in featured_subjects:
+            subject.icon = subject_icons.get(subject.name, 'book-medical')
+        
         context.update({
-            'total_subjects': Subject.objects.filter(is_active=True).count(),
-            'total_questions': Question.objects.filter(is_active=True).count(),
-            'total_users': UserProfile.objects.count(),
-            'featured_subjects': Subject.objects.filter(is_active=True)[:6],
+            'total_subjects': total_subjects,
+            'total_questions': total_questions,
+            'total_users': total_users,
+            'featured_subjects': featured_subjects,
+            # Add user profile for template conditionals
+            'user_profile': getattr(self.request.user, 'userprofile', None) if self.request.user.is_authenticated else None,
         })
         return context
 

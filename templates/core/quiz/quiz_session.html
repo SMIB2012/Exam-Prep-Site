@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quiz Session - {{ quiz_session.topic.name }} | MedPrep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/quiz.css' %}?v={{ CACHE_BUSTER }}">
+{% endblock %}
+
+{% block content %}
+<div class="quiz-session-container">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+        <div class="quiz-header-content">
+            <div class="quiz-info">
+                <h1 class="quiz-title">{{ quiz_session.topic.name }} Quiz</h1>
+                <div class="quiz-meta">
+                    <span class="quiz-subject">{{ quiz_session.topic.subject.name }}</span>
+                    <span class="quiz-progress">Question {{ current_question_number }} of {{ total_questions }}</span>
+                </div>
+            </div>
+            <div class="quiz-timer" id="quizTimer">
+                <i class="fas fa-clock"></i>
+                <span id="timeRemaining">{{ time_remaining }}</span>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progress_percentage }}%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="question-container">
+        <div class="question-card">
+            <div class="question-header">
+                <div class="question-number">Question {{ current_question_number }}</div>
+                <div class="question-difficulty difficulty-{{ question.difficulty|lower }}">
+                    {{ question.get_difficulty_display }}
+                </div>
+            </div>
+            
+            <div class="question-content">
+                <h2 class="question-text">{{ question.question_text|safe }}</h2>
+                
+                {% if question.image %}
+                <div class="question-image">
+                    <img src="{{ question.image.url }}" alt="Question Image" class="img-fluid">
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Answer Options -->
+            <div class="answer-options">
+                <form method="post" id="answerForm">
+                    {% csrf_token %}
+                    <div class="options-grid">
+                        {% for option in question.options.all %}
+                        <label class="option-card" for="option_{{ option.id }}">
+                            <input type="radio" 
+                                   name="selected_option" 
+                                   value="{{ option.id }}" 
+                                   id="option_{{ option.id }}"
+                                   {% if selected_option == option.id %}checked{% endif %}>
+                            <div class="option-content">
+                                <div class="option-letter">{{ forloop.counter|add:64|chr }}</div>
+                                <div class="option-text">{{ option.option_text|safe }}</div>
+                            </div>
+                            <div class="option-indicator">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="quiz-navigation">
+        <div class="nav-buttons">
+            {% if has_previous %}
+            <a href="{% url 'core:quiz_question' quiz_session.id previous_question_id %}" 
+               class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Previous
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-warning">
+                <i class="fas fa-save"></i> Save & Exit
+            </a>
+            
+            <button type="button" class="btn btn-secondary" id="flagQuestion">
+                <i class="fas fa-flag"></i> 
+                {% if is_flagged %}Unflag{% else %}Flag{% endif %}
+            </button>
+            
+            <button type="button" class="btn btn-primary" id="submitAnswer">
+                {% if has_next %}
+                    Next <i class="fas fa-arrow-right"></i>
+                {% else %}
+                    Finish Quiz <i class="fas fa-check"></i>
+                {% endif %}
+            </button>
+        </div>
+        
+        <!-- Question Navigator -->
+        <div class="question-navigator">
+            <div class="navigator-header">
+                <h4>Questions</h4>
+                <button class="btn btn-sm btn-outline-secondary" id="toggleNavigator">
+                    <i class="fas fa-grid-3x3"></i>
+                </button>
+            </div>
+            <div class="questions-grid" id="questionsGrid">
+                {% for q_num in question_numbers %}
+                <a href="{% url 'core:quiz_question' quiz_session.id q_num %}" 
+                   class="question-nav-item {% if q_num == current_question_number %}active{% endif %} 
+                          {% if q_num in answered_questions %}answered{% endif %}
+                          {% if q_num in flagged_questions %}flagged{% endif %}">
+                    {{ q_num }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Summary Modal -->
+    <div class="modal fade" id="quizSummaryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quiz Summary</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ answered_count }}</div>
+                            <div class="stat-label">Answered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ unanswered_count }}</div>
+                            <div class="stat-label">Unanswered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ flagged_count }}</div>
+                            <div class="stat-label">Flagged</div>
+                        </div>
+                    </div>
+                    <p class="summary-text">
+                        Are you sure you want to submit your quiz? You can still review and change your answers.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Quiz</button>
+                    <form method="post" action="{% url 'core:submit_quiz' quiz_session.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Timer functionality
+    let timeRemaining = {{ time_remaining_seconds }};
+    const timerElement = document.getElementById('timeRemaining');
+    
+    function updateTimer() {
+        const hours = Math.floor(timeRemaining / 3600);
+        const minutes = Math.floor((timeRemaining % 3600) / 60);
+        const seconds = timeRemaining % 60;
+        
+        let timeString = '';
+        if (hours > 0) {
+            timeString += hours + ':';
+        }
+        timeString += String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        
+        timerElement.textContent = timeString;
+        
+        if (timeRemaining <= 0) {
+            // Auto-submit quiz when time runs out
+            document.getElementById('answerForm').submit();
+        }
+        
+        timeRemaining--;
+    }
+    
+    // Update timer every second
+    setInterval(updateTimer, 1000);
+    
+    // Answer selection
+    const answerForm = document.getElementById('answerForm');
+    const submitButton = document.getElementById('submitAnswer');
+    const options = document.querySelectorAll('input[name="selected_option"]');
+    
+    options.forEach(option => {
+        option.addEventListener('change', function() {
+            // Auto-save answer
+            const formData = new FormData(answerForm);
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Update UI to show answer is saved
+                    document.querySelector('.question-nav-item.active').classList.add('answered');
+                }
+            });
+        });
+    });
+    
+    // Submit answer button
+    submitButton.addEventListener('click', function() {
+        {% if has_next %}
+            // Go to next question
+            const nextUrl = "{% url 'core:quiz_question' quiz_session.id next_question_id %}";
+            window.location.href = nextUrl;
+        {% else %}
+            // Show summary modal
+            const summaryModal = new bootstrap.Modal(document.getElementById('quizSummaryModal'));
+            summaryModal.show();
+        {% endif %}
+    });
+    
+    // Flag question
+    document.getElementById('flagQuestion').addEventListener('click', function() {
+        fetch("{% url 'core:flag_question' quiz_session.id question.id %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.innerHTML = data.is_flagged ? 
+                    '<i class="fas fa-flag"></i> Unflag' : 
+                    '<i class="fas fa-flag"></i> Flag';
+                
+                // Update navigator
+                const navItem = document.querySelector('.question-nav-item.active');
+                if (data.is_flagged) {
+                    navItem.classList.add('flagged');
+                } else {
+                    navItem.classList.remove('flagged');
+                }
+            }
+        });
+    });
+    
+    // Toggle question navigator
+    document.getElementById('toggleNavigator').addEventListener('click', function() {
+        const grid = document.getElementById('questionsGrid');
+        grid.classList.toggle('show');
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key >= '1' && e.key <= '4') {
+            const optionIndex = parseInt(e.key) - 1;
+            const option = options[optionIndex];
+            if (option) {
+                option.checked = true;
+                option.dispatchEvent(new Event('change'));
+            }
+        } else if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            submitButton.click();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prevButton = document.querySelector('.nav-buttons .btn-outline-secondary');
+            if (prevButton) prevButton.click();
+        } else if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            document.getElementById('flagQuestion').click();
+        }
+    });
+});
+</script>
+<script src="{% static 'core/js/quiz.js' %}?v=2025"></script>
+{% endblock %}

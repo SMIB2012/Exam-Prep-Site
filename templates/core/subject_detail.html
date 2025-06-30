@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ subject.name }} - MedPrep{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'core/css/subject-detail.css' %}?v=1.0" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="subject-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb text-white-50">
+                        <li class="breadcrumb-item"><a href="{% url 'core:question_bank' %}" class="text-white-75">Question Bank</a></li>
+                        <li class="breadcrumb-item active text-white">{{ subject.name }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-book text-success me-3"></i>
+                    {{ subject.name }}
+                </h1>
+                <p class="lead mb-0">
+                    {{ subject.description|default:"Comprehensive study materials and practice questions for MBBS students." }}
+                </p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="subject-stats bg-white text-primary p-3 rounded-3 d-inline-block">
+                    <div class="fw-bold fs-4">{{ subject.topics.count }}</div>
+                    <div class="small">Topics Available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Subject Overview -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <div class="subject-overview">
+                <h2 class="section-title text-primary mb-4">
+                    <i class="fas fa-info-circle me-2"></i>Subject Overview
+                </h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="overview-card">
+                            <div class="overview-icon bg-primary">
+                                <i class="fas fa-list-alt"></i>
+                            </div>
+                            <div class="overview-content">
+                                <h5>Total Topics</h5>
+                                <p class="text-muted">{{ subject.topics.count }} comprehensive topics covering all essential concepts</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="overview-card">
+                            <div class="overview-icon bg-success">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="overview-content">
+                                <h5>Practice Questions</h5>
+                                <p class="text-muted">{{ total_questions }} MCQs with detailed explanations</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="overview-card">
+                            <div class="overview-icon bg-warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="overview-content">
+                                <h5>Estimated Time</h5>
+                                <p class="text-muted">{{ estimated_hours|default:"20-30" }} hours of comprehensive study material</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="overview-card">
+                            <div class="overview-icon bg-orange">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="overview-content">
+                                <h5>Difficulty Level</h5>
+                                <p class="text-muted">Beginner to Advanced level questions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="quick-actions-card">
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                </h5>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'core:start_quiz' topics.first.pk %}" class="btn btn-primary">
+                        <i class="fas fa-play me-2"></i>Start Random Quiz
+                    </a>
+                    <a href="{% url 'core:resources' %}" class="btn btn-success">
+                        <i class="fas fa-book-open me-2"></i>Study Materials
+                    </a>
+                    <a href="{% url 'core:leaderboard' %}" class="btn btn-warning">
+                        <i class="fas fa-trophy me-2"></i>View Rankings
+                    </a>
+                </div>
+                
+                {% if subject.year_applicable != 'all' %}
+                <div class="mt-4">
+                    <div class="year-indicator">
+                        <h6 class="text-muted mb-2">Recommended For:</h6>
+                        <span class="badge bg-primary fs-6">{{ subject.get_year_applicable_display }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Topics Grid -->
+    <div class="topics-section">
+        <h2 class="section-title text-primary mb-4">
+            <i class="fas fa-th-large me-2"></i>Topics in {{ subject.name }}
+        </h2>
+        
+        <div class="row g-4">
+            {% for topic in topics %}
+            <div class="col-md-6 col-lg-4">
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div class="topic-number">#{{ forloop.counter }}</div>
+                        {% if topic.is_premium %}
+                        <div class="premium-badge">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="topic-content">
+                        <h5 class="topic-title">{{ topic.name }}</h5>
+                        <p class="topic-description">{{ topic.description|truncatechars:100|default:"Comprehensive coverage of essential concepts and practice questions." }}</p>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-question-circle text-primary"></i>
+                                <span>{{ topic.questions.count }} Questions</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-sticky-note text-success"></i>
+                                <span>{{ topic.notes.count }} Notes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-play-circle text-orange"></i>
+                                <span>{{ topic.videos.count }} Videos</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Difficulty Distribution -->
+                        <div class="difficulty-distribution">
+                            {% with easy_count=topic.questions.filter_difficulty_easy.count medium_count=topic.questions.filter_difficulty_medium.count hard_count=topic.questions.filter_difficulty_hard.count %}
+                            {% if easy_count > 0 %}
+                            <span class="difficulty-badge easy">{{ easy_count }} Easy</span>
+                            {% endif %}
+                            {% if medium_count > 0 %}
+                            <span class="difficulty-badge medium">{{ medium_count }} Medium</span>
+                            {% endif %}
+                            {% if hard_count > 0 %}
+                            <span class="difficulty-badge hard">{{ hard_count }} Hard</span>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="topic-actions">
+                        <a href="{% url 'core:start_quiz' topic.pk %}" class="btn btn-primary">
+                            <i class="fas fa-play me-2"></i>Start Quiz
+                        </a>
+                        <a href="{% url 'core:topic_detail' topic.pk %}" class="btn btn-outline-success btn-sm mt-2">
+                            <i class="fas fa-info-circle me-1"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state text-center py-5">
+                    <i class="fas fa-folder-open text-muted display-1 mb-4"></i>
+                    <h3 class="text-muted mb-3">No Topics Available</h3>
+                    <p class="text-muted mb-4">
+                        This subject doesn't have any topics yet. Please check back later.
+                    </p>
+                    <a href="{% url 'core:question_bank' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Question Bank
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if user.is_authenticated and user_quizzes %}
+    <div class="recent-activity mt-5">
+        <h2 class="section-title text-primary mb-4">
+            <i class="fas fa-history me-2"></i>Your Recent Activity in {{ subject.name }}
+        </h2>
+        
+        <div class="activity-timeline">
+            {% for quiz in user_quizzes|slice:":5" %}
+            <div class="activity-item">
+                <div class="activity-marker bg-{% if quiz.percentage_score >= 80 %}success{% elif quiz.percentage_score >= 60 %}warning{% else %}danger{% endif %}">
+                    <i class="fas fa-{% if quiz.percentage_score >= 80 %}check{% elif quiz.percentage_score >= 60 %}minus{% else %}times{% endif %}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-header">
+                        <h6 class="mb-1">{{ quiz.topic.name }} Quiz</h6>
+                        <span class="text-muted small">{{ quiz.completed_at|timesince }} ago</span>
+                    </div>
+                    <div class="activity-details">
+                        <span class="score-badge bg-{% if quiz.percentage_score >= 80 %}success{% elif quiz.percentage_score >= 60 %}warning{% else %}danger{% endif %}">
+                            {{ quiz.percentage_score }}%
+                        </span>
+                        <span class="text-muted">{{ quiz.score }}/{{ quiz.total_questions }} correct</span>
+                    </div>
+                </div>
+                <div class="activity-action">
+                    <a href="{% url 'core:quiz_result' quiz.pk %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye me-1"></i>View
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to topic cards
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe topic cards
+    document.querySelectorAll('.topic-card').forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        observer.observe(card);
+    });
+    
+    // Add hover effects
+    document.querySelectorAll('.topic-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Overview cards hover effects
+    document.querySelectorAll('.overview-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}

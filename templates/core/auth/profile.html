@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - MedPrep{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'core/css/profile.css' %}?v=1.0" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center">
+                    <div class="profile-avatar me-4">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div>
+                        <h1 class="display-6 fw-bold mb-2">{{ user.first_name|default:user.username }}</h1>
+                        <p class="lead mb-0">
+                            <i class="fas fa-graduation-cap text-success me-2"></i>
+                            {{ profile.year_of_study }} Year MBBS Student
+                        </p>
+                        <p class="mb-0 opacity-75">
+                            <i class="fas fa-university text-warning me-2"></i>
+                            {{ profile.college_name }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-end">
+                {% if profile.is_premium_active %}
+                <div class="premium-status bg-warning text-dark p-3 rounded-3 d-inline-block">
+                    <div class="fw-bold fs-5">
+                        <i class="fas fa-crown me-2"></i>Premium Active
+                    </div>
+                    <div class="small">Expires: {{ profile.premium_expires_at|date:"M d, Y" }}</div>
+                </div>
+                {% else %}
+                <div class="free-status bg-white text-primary p-3 rounded-3 d-inline-block">
+                    <div class="fw-bold fs-5">Free Plan</div>
+                    <div class="small">
+                        <a href="{% url 'core:subscription' %}" class="text-primary text-decoration-none">
+                            Upgrade to Premium
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Profile Statistics -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card bg-primary text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-quiz"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_quizzes }}</div>
+                    <div class="stat-label">Total Quizzes</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card bg-success text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ profile.total_quiz_score }}</div>
+                    <div class="stat-label">Total Score</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card bg-warning text-dark">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">#{{ user_rank|default:"--" }}</div>
+                    <div class="stat-label">Global Rank</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card bg-orange text-white">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ profile.user.date_joined|timesince|truncatewords:1 }}</div>
+                    <div class="stat-label">Member Since</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Profile Information -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-light border-bottom-0">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-user me-2"></i>Profile Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <label class="info-label">Full Name</label>
+                            <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="info-label">Email</label>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="info-label">Username</label>
+                            <div class="info-value">{{ user.username }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="info-label">Year of Study</label>
+                            <div class="info-value">
+                                <span class="badge bg-primary">{{ profile.year_of_study }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="info-label">College</label>
+                            <div class="info-value">{{ profile.college_name }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="info-label">Member Since</label>
+                            <div class="info-value">{{ user.date_joined|date:"F d, Y" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'core:profile_edit' %}" class="btn btn-primary w-100">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-light border-bottom-0">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-history me-2"></i>Recent Quiz Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_quizzes %}
+                    <div class="quiz-timeline">
+                        {% for quiz in recent_quizzes %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-{% if quiz.percentage_score >= 80 %}success{% elif quiz.percentage_score >= 60 %}warning{% else %}danger{% endif %}">
+                                <i class="fas fa-{% if quiz.percentage_score >= 80 %}check{% elif quiz.percentage_score >= 60 %}minus{% else %}times{% endif %}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold">{{ quiz.topic.name }}</h6>
+                                        <p class="text-muted small mb-0">{{ quiz.topic.subject.name }}</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-{% if quiz.percentage_score >= 80 %}success{% elif quiz.percentage_score >= 60 %}warning{% else %}danger{% endif %} fs-6">
+                                            {{ quiz.percentage_score }}%
+                                        </span>
+                                        <div class="small text-muted">{{ quiz.completed_at|date:"M d, Y" }}</div>
+                                    </div>
+                                </div>
+                                <div class="quiz-details">
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <div class="detail-stat">
+                                                <div class="stat-number text-primary">{{ quiz.score }}</div>
+                                                <div class="stat-label">Score</div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="detail-stat">
+                                                <div class="stat-number text-success">{{ quiz.total_questions }}</div>
+                                                <div class="stat-label">Questions</div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="detail-stat">
+                                                <div class="stat-number text-orange">{{ quiz.time_taken|default:"--" }}</div>
+                                                <div class="stat-label">Time</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="{% url 'core:quiz_result' quiz.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Result
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-line me-2"></i>View Full Dashboard
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="empty-state text-center py-5">
+                        <i class="fas fa-chart-bar text-muted display-3 mb-3"></i>
+                        <h5 class="text-muted mb-3">No Quiz Activity Yet</h5>
+                        <p class="text-muted mb-4">Start taking quizzes to see your progress and performance here.</p>
+                        <a href="{% url 'core:question_bank' %}" class="btn btn-primary">
+                            <i class="fas fa-play me-2"></i>Start Your First Quiz
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Performance -->
+    {% if subject_performance %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom-0">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Subject-wise Performance
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        {% for subject, data in subject_performance.items %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="performance-card">
+                                <div class="performance-header">
+                                    <h6 class="fw-bold mb-1">{{ subject }}</h6>
+                                    <div class="performance-score">{{ data.percentage|floatformat:1 }}%</div>
+                                </div>
+                                <div class="performance-progress mb-3">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-{% if data.percentage >= 80 %}success{% elif data.percentage >= 60 %}warning{% else %}danger{% endif %}" 
+                                             style="width: {{ data.percentage }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="performance-details">
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <div class="detail-stat">
+                                                <div class="stat-number text-success">{{ data.total_score }}</div>
+                                                <div class="stat-label">Total Score</div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="detail-stat">
+                                                <div class="stat-number text-primary">{{ data.quiz_count }}</div>
+                                                <div class="stat-label">Quizzes</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="action-buttons">
+                <a href="{% url 'core:question_bank' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-play me-2"></i>Continue Practicing
+                </a>
+                <a href="{% url 'core:leaderboard' %}" class="btn btn-outline-success btn-lg me-3">
+                    <i class="fas fa-trophy me-2"></i>View Leaderboard
+                </a>
+                {% if not profile.is_premium_active %}
+                <a href="{% url 'core:subscription' %}" class="btn btn-warning btn-lg">
+                    <i class="fas fa-crown me-2"></i>Upgrade to Premium
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate progress bars
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 500);
+    });
+    
+    // Animate stat numbers
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(stat => {
+        const finalValue = parseInt(stat.textContent) || 0;
+        if (finalValue > 0) {
+            let currentValue = 0;
+            const increment = finalValue / 30;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= finalValue) {
+                    currentValue = finalValue;
+                    clearInterval(timer);
+                }
+                stat.textContent = Math.floor(currentValue);
+            }, 50);
+        }
+    });
+    
+    // Add hover effects to timeline items
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

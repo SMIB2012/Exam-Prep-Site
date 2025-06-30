@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quiz Center - MedPrep{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'core/css/quiz.css' %}?v=1.1" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="quiz-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-play-circle text-success me-3"></i>
+                    Quiz Center
+                </h1>
+                <p class="lead mb-0">
+                    Challenge yourself with topic-wise quizzes and track your progress.
+                </p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="quiz-stats bg-white text-primary p-3 rounded-3 d-inline-block">
+                    <div class="fw-bold fs-4">{{ recent_quizzes.count }}</div>
+                    <div class="small">Quizzes Taken</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Recent Quiz Activity -->
+    {% if recent_quizzes %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom-0">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-history me-2"></i>Recent Quiz Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for quiz in recent_quizzes|slice:":6" %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="recent-quiz-card">
+                                <div class="quiz-status status-{{ quiz.status }}">
+                                    <i class="fas fa-{% if quiz.status == 'completed' %}check-circle{% elif quiz.status == 'in_progress' %}clock{% else %}times-circle{% endif %}"></i>
+                                    <span>{{ quiz.get_status_display }}</span>
+                                </div>
+                                <div class="quiz-info">
+                                    <h6 class="fw-bold mb-1">{{ quiz.topic.name }}</h6>
+                                    <p class="text-muted small mb-2">{{ quiz.topic.subject.name }}</p>
+                                    {% if quiz.status == 'completed' %}
+                                    <div class="score-display">
+                                        <span class="score-value bg-{% if quiz.percentage_score >= 80 %}success{% elif quiz.percentage_score >= 60 %}warning{% else %}danger{% endif %}">
+                                            {{ quiz.percentage_score }}%
+                                        </span>
+                                        <span class="score-details">{{ quiz.score }}/{{ quiz.total_questions }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="quiz-actions">
+                                    {% if quiz.status == 'completed' %}
+                                    <a href="{% url 'core:quiz_result' quiz.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Result
+                                    </a>
+                                    <a href="{% url 'core:start_quiz' quiz.topic.pk %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-redo me-1"></i>Retake
+                                    </a>
+                                    {% elif quiz.status == 'in_progress' %}
+                                    <a href="{% url 'core:quiz_session' quiz.pk %}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-play me-1"></i>Continue
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Available Topics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="section-header">
+                <h2 class="section-title text-primary">
+                    <i class="fas fa-list-alt me-2"></i>Available Topics
+                </h2>
+                <p class="section-description">Choose a topic to start a new quiz session</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for topic in topics %}
+        <div class="col-md-6 col-lg-4">
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="subject-badge bg-primary">{{ topic.subject.name }}</div>
+                    {% if topic.questions.filter(is_premium=True).exists %}
+                    <div class="premium-indicator">
+                        <i class="fas fa-crown text-warning"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="topic-content">
+                    <h5 class="topic-name">{{ topic.name }}</h5>
+                    <p class="topic-description">{{ topic.description|truncatechars:80 }}</p>
+                    
+                    <div class="topic-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-question-circle text-primary"></i>
+                            <span>{{ topic.questions.count }} Questions</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-clock text-orange"></i>
+                            <span>~{{ topic.estimated_time|default:"20" }} min</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Difficulty Levels -->
+                    <div class="difficulty-levels">
+                        <span class="difficulty-label">Difficulty:</span>
+                        {% if topic.questions.filter(difficulty='easy').exists %}
+                        <span class="difficulty-badge easy">Easy</span>
+                        {% endif %}
+                        {% if topic.questions.filter(difficulty='medium').exists %}
+                        <span class="difficulty-badge medium">Medium</span>
+                        {% endif %}
+                        {% if topic.questions.filter(difficulty='hard').exists %}
+                        <span class="difficulty-badge hard">Hard</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="topic-actions">
+                    <a href="{% url 'core:start_quiz' topic.pk %}" class="btn btn-primary w-100">
+                        <i class="fas fa-play me-2"></i>Start Quiz
+                    </a>
+                    <a href="{% url 'core:topic_detail' topic.pk %}" class="btn btn-outline-success btn-sm mt-2 w-100">
+                        <i class="fas fa-info-circle me-1"></i>Topic Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-question-circle text-muted display-1 mb-4"></i>
+                <h3 class="text-muted mb-3">No Topics Available</h3>
+                <p class="text-muted mb-4">
+                    It looks like there are no quiz topics available at the moment.
+                </p>
+                <a href="{% url 'core:question_bank' %}" class="btn btn-primary">
+                    <i class="fas fa-book me-2"></i>Browse Question Bank
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Quick Start Form -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="quick-start-section">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-gradient-success text-white">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-bolt me-2"></i>Quick Start Quiz
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'core:start_quiz' 0 %}" class="quiz-form">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-semibold">Topic</label>
+                                    {{ form.topic }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Difficulty</label>
+                                    {{ form.difficulty }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Questions</label>
+                                    {{ form.number_of_questions }}
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label fw-semibold">Time (min)</label>
+                                    {{ form.time_limit }}
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fas fa-rocket me-2"></i>Start Quiz
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Summary -->
+    {% if recent_quizzes %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="performance-summary">
+                <h3 class="text-center text-primary mb-4">
+                    <i class="fas fa-chart-line me-2"></i>Your Performance Overview
+                </h3>
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="performance-card bg-primary text-white">
+                            <div class="performance-icon">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <div class="performance-stats">
+                                <div class="stat-number">{{ recent_quizzes.count }}</div>
+                                <div class="stat-label">Total Quizzes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="performance-card bg-success text-white">
+                            <div class="performance-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="performance-stats">
+                                <div class="stat-number">{{ recent_quizzes|length }}</div>
+                                <div class="stat-label">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="performance-card bg-warning text-dark">
+                            <div class="performance-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="performance-stats">
+                                <div class="stat-number">--</div>
+                                <div class="stat-label">Avg Score</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="performance-card bg-orange text-white">
+                            <div class="performance-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="performance-stats">
+                                <div class="stat-number">--</div>
+                                <div class="stat-label">Best Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to topic cards
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe topic cards
+    document.querySelectorAll('.topic-card').forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        observer.observe(card);
+    });
+    
+    // Form validation
+    const quizForm = document.querySelector('.quiz-form');
+    if (quizForm) {
+        quizForm.addEventListener('submit', function(e) {
+            const topic = this.querySelector('[name="topic"]').value;
+            const questions = this.querySelector('[name="number_of_questions"]').value;
+            const timeLimit = this.querySelector('[name="time_limit"]').value;
+            
+            if (!topic) {
+                e.preventDefault();
+                alert('Please select a topic');
+                return;
+            }
+            
+            if (questions < 5 || questions > 50) {
+                e.preventDefault();
+                alert('Number of questions must be between 5 and 50');
+                return;
+            }
+            
+            if (timeLimit < 5 || timeLimit > 120) {
+                e.preventDefault();
+                alert('Time limit must be between 5 and 120 minutes');
+                return;
+            }
+        });
+    }
+    
+    // Add hover effects
+    document.querySelectorAll('.topic-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}
