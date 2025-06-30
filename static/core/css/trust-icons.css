@@ -1,0 +1,18 @@
+/* Orange Theme Color Variables */
+:root {
+    --orange-primary: #ff6b35;
+    --orange-hover: #e55a2b;
+    --orange-light: #ff8660;
+}
+
+/* Trust Icon Hover Effects */
+.trust-icon {
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: all 0.3s ease !important;
+}
+
+.trust-indicators .col-md-3:hover .trust-icon {
+    color: var(--orange-primary) !important;
+    transform: scale(1.2) !important;
+    filter: drop-shadow(0 0 8px var(--orange-primary)) !important;
+}
