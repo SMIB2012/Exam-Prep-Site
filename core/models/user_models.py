@@ -7,15 +7,18 @@ class UserProfile(models.Model):
     """Extended user profile for MBBS students"""
     
     YEAR_CHOICES = [
-        ('1st', '1st Year'),
-        ('2nd', '2nd Year'),
-        ('3rd', '3rd Year'),
-        ('4th', '4th Year'),
-        ('5th', '5th Year (Final)'),
+        ('1st_year', '1st Year MBBS'),
+        ('2nd_year', '2nd Year MBBS'),
+        ('3rd_year', '3rd Year MBBS'),
+        ('4th_year', '4th Year MBBS'),
+        ('final_year', '5th Year MBBS (Final)'),
+        ('graduate', 'Graduate'),
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    year_of_study = models.CharField(max_length=3, choices=YEAR_CHOICES)
+    year_of_study = models.CharField(max_length=20, choices=YEAR_CHOICES)
+    province = models.CharField(max_length=100)
+    college_type = models.CharField(max_length=20, choices=[('Public', 'Public'), ('Private', 'Private')])
     college_name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=15, blank=True)
     profile_picture = models.ImageField(upload_to='uploads/profiles/', blank=True, null=True)

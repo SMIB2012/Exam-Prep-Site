@@ -17,6 +17,9 @@ class Note(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # Many-to-many relationship with tags
+    tags = models.ManyToManyField('Tag', blank=True, related_name='notes')
+    
     class Meta:
         verbose_name = 'Note'
         verbose_name_plural = 'Notes'
@@ -39,6 +42,9 @@ class Flashcard(models.Model):
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_flashcards')
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Many-to-many relationship with tags
+    tags = models.ManyToManyField('Tag', blank=True, related_name='flashcards')
     
     class Meta:
         verbose_name = 'Flashcard'
@@ -65,6 +71,9 @@ class VideoResource(models.Model):
     is_active = models.BooleanField(default=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_videos')
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Many-to-many relationship with tags
+    tags = models.ManyToManyField('Tag', blank=True, related_name='videos')
     
     class Meta:
         verbose_name = 'Video Resource'

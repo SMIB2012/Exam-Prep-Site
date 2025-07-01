@@ -4,264 +4,529 @@
 {% block title %}Sign Up - MedPrep{% endblock %}
 
 {% block extra_css %}
-<link href="{% static 'core/css/auth.css' %}?v=2025-color-scheme" rel="stylesheet">
-<style>
-body { background: none !important; }
-</style>
+<link rel="stylesheet" href="{% static 'core/css/login.css' %}?v=2025-modern-redesign">
 {% endblock %}
-
-{% block body_class %}register-page{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-wrapper">
-        <!-- Left Side - Motivational Content -->
-        <div class="auth-left">
-            <div class="auth-brand">
-                <div class="brand-logo">
-                    <i class="fas fa-user-md"></i>
-                </div>
-                <h1>MedPrep</h1>
-                <p class="brand-tagline">Your Path to MBBS Excellence</p>
-            </div>
-            
-            <div class="auth-motivation">
-                <div class="motivation-content">
-                    <div class="motivation-icon">
-                        <i class="fas fa-stethoscope"></i>
-                    </div>
-                    <blockquote>
-                        <p>"The expert in anything was once a beginner."</p>
-                        <cite>- Helen Hayes</cite>
-                    </blockquote>
-                </div>
-                
-                <div class="auth-features">
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Comprehensive Question Bank</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Progress Tracking</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Expert Explanations</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Community Support</span>
-                    </div>
-                </div>
-                
-                <div class="auth-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">10,000+</span>
-                        <span class="stat-label">Questions</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">5,000+</span>
-                        <span class="stat-label">Students</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">95%</span>
-                        <span class="stat-label">Success Rate</span>
-                    </div>
-                </div>
-                
-                <div class="auth-trust">
-                    <p><i class="fas fa-shield-alt"></i> Trusted by medical students nationwide</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Right Side - Registration Form -->
-        <div class="auth-right">
-            <div class="auth-form-container">
-                <div class="auth-header">
-                    <div class="auth-back">
-                        <a href="{% url 'core:home' %}" class="auth-back-btn">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Home
-                        </a>
-                    </div>
-                    <h2>Create Your Account</h2>
-                    <p>Join thousands of students preparing for MBBS entrance exams</p>
-                </div>
-                
-                <form method="post" class="auth-form" id="registerForm">
-                    {% csrf_token %}
-                    
-                    {% if form.errors %}
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                {% for error in form.non_field_errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                        <li>{{ field.label }}: {{ error }}</li>
-                                    {% endfor %}
-                                {% endfor %}
-                            </ul>
+<div class="login-page">
+    <!-- Main Registration Section -->
+    <main class="login-main">
+        <div class="container">
+            <div class="login-wrapper">
+                <!-- Left side with motivational content -->
+                <div class="login-hero">
+                    <div class="hero-content">
+                        <h2>Start Your Medical Journey</h2>
+                        <p>Join thousands of students preparing for MBBS entrance exams</p>
+                        <div class="hero-quote">
+                            <i class="fas fa-quote-left"></i>
+                            <blockquote>"The expert in anything was once a beginner."</blockquote>
                         </div>
-                    {% endif %}
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="{{ form.first_name.id_for_label }}">First Name</label>
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                {{ form.first_name }}
+                        <div class="signup-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>10,000+ Practice Questions</span>
                             </div>
-                            {% if form.first_name.errors %}
-                                <div class="field-error">{{ form.first_name.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="{{ form.last_name.id_for_label }}">Last Name</label>
-                            <div class="input-group">
-                                <i class="fas fa-user"></i>
-                                {{ form.last_name }}
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Progress Tracking</span>
                             </div>
-                            {% if form.last_name.errors %}
-                                <div class="field-error">{{ form.last_name.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="{{ form.username.id_for_label }}">Username</label>
-                        <div class="input-group">
-                            <i class="fas fa-at"></i>
-                            {{ form.username }}
-                        </div>
-                        <div class="field-help">Choose a unique username (letters, numbers, and @/./+/-/_ only)</div>
-                        {% if form.username.errors %}
-                            <div class="field-error">{{ form.username.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="{{ form.email.id_for_label }}">Email Address</label>
-                        <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            {{ form.email }}
-                        </div>
-                        {% if form.email.errors %}
-                            <div class="field-error">{{ form.email.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
-                        <div class="input-group">
-                            <i class="fas fa-phone"></i>
-                            {{ form.phone_number }}
-                        </div>
-                        {% if form.phone_number.errors %}
-                            <div class="field-error">{{ form.phone_number.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="{{ form.college_name.id_for_label }}">College/Institution (Optional)</label>
-                        <div class="input-group">
-                            <i class="fas fa-graduation-cap"></i>
-                            {{ form.college_name }}
-                        </div>
-                        {% if form.college_name.errors %}
-                            <div class="field-error">{{ form.college_name.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="{{ form.password1.id_for_label }}">Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            {{ form.password1 }}
-                            <button type="button" class="password-toggle" data-target="{{ form.password1.id_for_label }}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="password-strength">
-                            <div class="strength-bar">
-                                <div class="strength-fill"></div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Expert Explanations</span>
                             </div>
-                            <div class="strength-text">Password strength</div>
                         </div>
-                        <div class="field-help">
-                            <ul class="password-requirements">
-                                <li data-requirement="length"><i class="fas fa-times"></i> At least 8 characters</li>
-                                <li data-requirement="uppercase"><i class="fas fa-times"></i> One uppercase letter</li>
-                                <li data-requirement="lowercase"><i class="fas fa-times"></i> One lowercase letter</li>
-                                <li data-requirement="number"><i class="fas fa-times"></i> One number</li>
-                            </ul>
-                        </div>
-                        {% if form.password1.errors %}
-                            <div class="field-error">{{ form.password1.errors.0 }}</div>
-                        {% endif %}
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            {{ form.password2 }}
-                            <button type="button" class="password-toggle" data-target="{{ form.password2.id_for_label }}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="password-match">
-                            <i class="fas fa-times"></i>
-                            <span>Passwords must match</span>
-                        </div>
-                        {% if form.password2.errors %}
-                            <div class="field-error">{{ form.password2.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="form-group checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="terms" required>
-                            <span class="checkmark"></span>
-                            I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
-                        </label>
-                    </div>
-                    
-                    <div class="form-group checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="newsletter">
-                            <span class="checkmark"></span>
-                            Send me updates about new features and exam tips
-                        </label>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary btn-full-width">
-                        <span class="btn-text">Create Account</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </form>
-                
-                <div class="auth-divider">
-                    <span>Already have an account?</span>
                 </div>
-                
-                <a href="{% url 'core:login' %}" class="btn-secondary btn-full-width">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Sign In</span>
-                </a>
-                
-                <div class="auth-footer">
-                    <p><i class="fas fa-lock"></i> Your information is secure and encrypted</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'core/js/auth.js' %}?v=2025-color-scheme"></script>
+                <!-- Right side with registration form -->
+                <div class="login-form-section">
+                    <div class="form-container">
+                        <!-- Header with Logo and Login Link inside form container -->
+                        <div class="form-header">
+                            <div class="header-content">
+                                <a href="{% url 'core:home' %}" class="logo-link">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>MedPrep</span>
+                                </a>
+                                <a href="{% url 'core:login' %}" class="signup-instead-btn">Login Instead</a>
+                            </div>
+                        </div>
+
+                        <h1 class="form-title">Sign Up for MedPrep</h1>
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %}"></i>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if form.errors %}
+                            <div class="alert alert-error">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div>
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <strong>{{ field.label }}:</strong> {{ error }}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <form method="post" class="login-form">
+                            {% csrf_token %}
+                            
+                            <!-- Full Name (combining first and last name in display) -->
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="id_first_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        First Name
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="first_name" 
+                                        id="id_first_name" 
+                                        class="form-control" 
+                                        placeholder="Enter your first name"
+                                        required
+                                        value="{{ form.first_name.value|default:'' }}"
+                                    >
+                                    {% if form.first_name.errors %}
+                                        <div class="form-error">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            {{ form.first_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group half-width">
+                                    <label for="id_last_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Last Name
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="last_name" 
+                                        id="id_last_name" 
+                                        class="form-control" 
+                                        placeholder="Enter your last name"
+                                        required
+                                        value="{{ form.last_name.value|default:'' }}"
+                                    >
+                                    {% if form.last_name.errors %}
+                                        <div class="form-error">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            {{ form.last_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_email" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email Address
+                                </label>
+                                <input 
+                                    type="email" 
+                                    name="email" 
+                                    id="id_email" 
+                                    class="form-control" 
+                                    placeholder="Enter your email address"
+                                    required
+                                    value="{{ form.email.value|default:'' }}"
+                                >
+                                {% if form.email.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_username" class="form-label">
+                                    <i class="fas fa-at"></i>
+                                    Username
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="username" 
+                                    id="id_username" 
+                                    class="form-control" 
+                                    placeholder="Choose a unique username"
+                                    required
+                                    value="{{ form.username.value|default:'' }}"
+                                >
+                                {% if form.username.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.username.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_password1" class="form-label">
+                                    <i class="fas fa-lock"></i>
+                                    Password
+                                </label>
+                                <div class="password-input-wrapper">
+                                    <input 
+                                        type="password" 
+                                        name="password1" 
+                                        id="id_password1" 
+                                        class="form-control" 
+                                        placeholder="Enter your password"
+                                        required
+                                    >
+                                    <button type="button" class="password-toggle" onclick="togglePasswordField('id_password1', 'password-toggle-icon-1')">
+                                        <i class="fas fa-eye" id="password-toggle-icon-1"></i>
+                                    </button>
+                                </div>
+                                {% if form.password1.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_password2" class="form-label">
+                                    <i class="fas fa-lock"></i>
+                                    Confirm Password
+                                </label>
+                                <div class="password-input-wrapper">
+                                    <input 
+                                        type="password" 
+                                        name="password2" 
+                                        id="id_password2" 
+                                        class="form-control" 
+                                        placeholder="Confirm your password"
+                                        required
+                                    >
+                                    <button type="button" class="password-toggle" onclick="togglePasswordField('id_password2', 'password-toggle-icon-2')">
+                                        <i class="fas fa-eye" id="password-toggle-icon-2"></i>
+                                    </button>
+                                </div>
+                                {% if form.password2.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_year_of_study" class="form-label">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Year of Study
+                                </label>
+                                <select name="year_of_study" id="id_year_of_study" class="form-control" required>
+                                    <option value="">Select your year of study</option>
+                                    <option value="1st_year" {% if form.year_of_study.value == '1st_year' %}selected{% endif %}>1st Year MBBS</option>
+                                    <option value="2nd_year" {% if form.year_of_study.value == '2nd_year' %}selected{% endif %}>2nd Year MBBS</option>
+                                    <option value="3rd_year" {% if form.year_of_study.value == '3rd_year' %}selected{% endif %}>3rd Year MBBS</option>
+                                    <option value="4th_year" {% if form.year_of_study.value == '4th_year' %}selected{% endif %}>4th Year MBBS</option>
+                                    <option value="final_year" {% if form.year_of_study.value == 'final_year' %}selected{% endif %}>5th Year MBBS (Final)</option>
+                                    <option value="graduate" {% if form.year_of_study.value == 'graduate' %}selected{% endif %}>Graduate</option>
+                                </select>
+                                {% if form.year_of_study.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.year_of_study.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_province" class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Province
+                                </label>
+                                <select name="province" id="id_province" class="form-control" required>
+                                    <option value="">Select Province</option>
+                                    <option value="Punjab" {% if form.province.value == 'Punjab' %}selected{% endif %}>Punjab</option>
+                                    <option value="Sindh" {% if form.province.value == 'Sindh' %}selected{% endif %}>Sindh</option>
+                                    <option value="Khyber Pakhtunkhwa" {% if form.province.value == 'Khyber Pakhtunkhwa' %}selected{% endif %}>Khyber Pakhtunkhwa</option>
+                                    <option value="Balochistan" {% if form.province.value == 'Balochistan' %}selected{% endif %}>Balochistan</option>
+                                    <option value="Azad Jammu & Kashmir" {% if form.province.value == 'Azad Jammu & Kashmir' %}selected{% endif %}>Azad Jammu & Kashmir</option>
+                                </select>
+                                {% if form.province.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.province.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_college_type" class="form-label">
+                                    <i class="fas fa-building"></i>
+                                    College Type
+                                </label>
+                                <select name="college_type" id="id_college_type" class="form-control" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Public" {% if form.college_type.value == 'Public' %}selected{% endif %}>Public</option>
+                                    <option value="Private" {% if form.college_type.value == 'Private' %}selected{% endif %}>Private</option>
+                                </select>
+                                {% if form.college_type.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.college_type.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_college_name" class="form-label">
+                                    <i class="fas fa-university"></i>
+                                    Medical College (Required)
+                                </label>
+                                <select name="college_name" id="id_college_name" class="form-control" required disabled>
+                                    <option value="">Select province and type first</option>
+                                </select>
+                                {% if form.college_name.errors %}
+                                    <div class="form-error">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        {{ form.college_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-options">
+                                <label class="remember-me-checkbox">
+                                    <input type="checkbox" name="terms" required>
+                                    <span class="checkmark"></span>
+                                    <i class="fas fa-shield-alt"></i>
+                                    I agree to <a href="#" class="terms-link">Terms & Privacy Policy</a>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="login-btn">
+                                <i class="fas fa-user-plus"></i>
+                                Create Account
+                            </button>
+                        </form>
+
+                        <div class="signup-prompt">
+                            <p>Already have an account? <a href="{% url 'core:login' %}" class="signup-link">Login Here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// Medical Colleges Data
+const medicalColleges = {
+    "Punjab": {
+        "Public": [
+            "Allama Iqbal Medical College (Lahore)",
+            "Ameer-ud-Din (PGMI) Medical College (Lahore)",
+            "Army Medical College (Rawalpindi)",
+            "D.G. Khan Medical College (Dera Ghazi Khan)",
+            "Fatima Jinnah Medical College (Lahore)",
+            "Services Institute of Medical Sciences (Lahore)",
+            "Gujranwala Medical College",
+            "Khawaja Muhammad Safdar MC (Sialkot)",
+            "King Edward Medical University (Lahore)",
+            "Nawaz Sharif Medical College (Gujrat)",
+            "Nishtar Medical College (Multan)",
+            "Punjab Medical College (Faisalabad)",
+            "Quaid‑e‑Azam Medical College (Bahawalpur)",
+            "Rawalpindi Medical College (Rawalpindi)",
+            "Sahiwal Medical College",
+            "Sargodha Medical College",
+            "Shaikh Khalifa Bin Zayed MC (Lahore)",
+            "Sheikh Zayed Medical College (Rahim Yar Khan)",
+            "Narowal Medical College"
+        ],
+        "Private": [
+            "FMH College of Medicine & Dentistry (Lahore)",
+            "Lahore Medical & Dental College",
+            "University College of Medicine & Dentistry (Lahore)",
+            "Al Aleem Medical College",
+            "Rahbar Medical College",
+            "Rashid Latif Medical College",
+            "Azra Naheed Medical College",
+            "Pak Red Crescent Medical College",
+            "Sharif Medical & Dental College",
+            "Continental Medical College",
+            "Akhtar Saeed Medical College",
+            "CMH Lahore Medical & Dental College",
+            "Shalamar Medical & Dental College",
+            "Avicenna Medical College",
+            "Abwa Medical College",
+            "Independent Medical College",
+            "Aziz Fatima Medical College",
+            "Multan Medical & Dental College",
+            "Bakhtawar Amin Medical & Dental College",
+            "Central Park Medical College",
+            "CIMS Multan",
+            "HITEC Institute of Medical Sciences",
+            "Hashmat Medical & Dental College",
+            "Shahida Islam Medical College",
+            "Wah Medical College",
+            "Sahara Medical College",
+            "CMH Kharian Medical College",
+            "M. Islam Medical College",
+            "Islam Medical College",
+            "Fazaia Medical College",
+            "Rai Medical College",
+            "Margalla Institute of Health Sciences",
+            "Mohammad Dental College",
+            "Islamabad Medical & Dental College",
+            "Yusra Medical & Dental College"
+        ]
+    },
+    "Sindh": {
+        "Public": [
+            "Dow Medical College",
+            "Dow International Medical College",
+            "Karachi Medical & Dental College",
+            "Chandka Medical College (Larkana)",
+            "Ghulam Muhammad Mahar Medical College (Sukkur)",
+            "Liaquat University of Medical & Health Sciences (Jamshoro)",
+            "Peoples UMHS for Women (Nawabshah)",
+            "Shaheed Mohtarma Benazir Bhutto MC (Lyari, Karachi)",
+            "Jinnah Sindh Medical University",
+            "Khairpur Medical College",
+            "Bilawal Medical College (Hyderabad)"
+        ],
+        "Private": [
+            "Aga Khan University",
+            "Baqai Medical College",
+            "Hamdard College of Medicine & Dentistry",
+            "Jinnah Medical & Dental College",
+            "Sir Syed College of Medical Sciences",
+            "Ziauddin Medical College",
+            "Liaquat National Medical College",
+            "Bahria University Medical College",
+            "Karachi Institute of Medical Sciences",
+            "Al‑Tibri Medical College",
+            "United Medical & Dental College",
+            "Indus Medical College (Tando Muhammad Khan)",
+            "Isra University Hyderabad",
+            "Muhammad Medical College (Mirpurkhas)",
+            "Suleman Roshan Medical College (Tando Adam)",
+            "Fazaia Ruth Pfau Medical College (Karachi)"
+        ]
+    },
+    "Khyber Pakhtunkhwa": {
+        "Public": [
+            "Khyber Medical College (Peshawar)",
+            "Khyber Girls Medical College",
+            "Ayub Medical College (Abbottabad)",
+            "Saidu Medical College (Swat)",
+            "Gomal Medical College (D.I. Khan)",
+            "KMU Institute of Medical Sciences (Kohat)",
+            "Bannu Medical College",
+            "Bacha Khan Medical College (Mardan)",
+            "Gajju Khan Medical College (Swabi)",
+            "Nowshera Medical College"
+        ],
+        "Private": [
+            "Abbottabad International Medical College",
+            "Al‑Razi Medical College",
+            "Frontier Medical College (Abbottabad)",
+            "Kabir Medical College (Peshawar)",
+            "Northwest School of Medicine",
+            "Pak International Medical College",
+            "Peshawar Medical College",
+            "Rehman Medical College",
+            "Women Medical & Dental College (Abbottabad)",
+            "Swat Medical College",
+            "Jinnah Medical College (Peshawar)"
+        ]
+    },
+    "Balochistan": {
+        "Public": [
+            "Bolan Medical College (Quetta)",
+            "Loralai Medical College",
+            "Makran Medical College (Turbat)",
+            "Jhalawan Medical College (Khuzdar)"
+        ],
+        "Private": [
+            "Quetta Institute of Medical Sciences (Quetta)"
+        ]
+    },
+    "Azad Jammu & Kashmir": {
+        "Public": [
+            "Azad Jammu & Kashmir Medical College (Muzaffarabad)",
+            "Mohtarma Benazir Bhutto Shaheed Medical College (Mirpur)",
+            "Poonch Medical College (Rawalakot)"
+        ],
+        "Private": [
+            "Mohiuddin Islamic Medical College (Mirpur)"
+        ]
+    }
+};
+
+function togglePasswordField(fieldId, iconId) {
+    const passwordField = document.getElementById(fieldId);
+    const toggleIcon = document.getElementById(iconId);
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+function populateColleges() {
+    const provinceSelect = document.getElementById('id_province');
+    const collegeTypeSelect = document.getElementById('id_college_type');
+    const collegeNameSelect = document.getElementById('id_college_name');
+    
+    const province = provinceSelect.value;
+    const collegeType = collegeTypeSelect.value;
+    
+    // Clear college name options
+    collegeNameSelect.innerHTML = '<option value="">Select college</option>';
+    
+    if (province && collegeType && medicalColleges[province] && medicalColleges[province][collegeType]) {
+        collegeNameSelect.disabled = false;
+        
+        medicalColleges[province][collegeType].forEach(college => {
+            const option = document.createElement('option');
+            option.value = college;
+            option.textContent = college;
+            collegeNameSelect.appendChild(option);
+        });
+    } else {
+        collegeNameSelect.disabled = true;
+        collegeNameSelect.innerHTML = '<option value="">Select province and type first</option>';
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const provinceSelect = document.getElementById('id_province');
+    const collegeTypeSelect = document.getElementById('id_college_type');
+    
+    if (provinceSelect && collegeTypeSelect) {
+        provinceSelect.addEventListener('change', populateColleges);
+        collegeTypeSelect.addEventListener('change', populateColleges);
+        
+        // Populate on page load if values are already selected
+        populateColleges();
+    }
+});
+</script>
 {% endblock %}

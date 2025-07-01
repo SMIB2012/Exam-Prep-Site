@@ -76,6 +76,9 @@ class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # Many-to-many relationship with tags
+    tags = models.ManyToManyField('Tag', blank=True, related_name='questions')
+    
     class Meta:
         verbose_name = 'Question'
         verbose_name_plural = 'Questions'

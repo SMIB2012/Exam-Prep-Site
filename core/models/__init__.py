@@ -3,11 +3,13 @@ from .academic_models import Subject, Topic, Question, Option
 from .quiz_models import QuizSession, UserAnswer
 from .subscription_models import SubscriptionPlan, PaymentProof
 from .resource_models import Flashcard, Note, VideoResource, UserProgress
+from .tag_models import Tag
 
 __all__ = [
     'UserProfile',
     'Subject', 'Topic', 'Question', 'Option',
     'QuizSession', 'UserAnswer',
     'SubscriptionPlan', 'PaymentProof',
-    'Flashcard', 'Note', 'VideoResource', 'UserProgress'
+    'Flashcard', 'Note', 'VideoResource', 'UserProgress',
+    'Tag'
 ]

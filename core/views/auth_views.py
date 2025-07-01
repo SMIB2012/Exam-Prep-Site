@@ -9,30 +9,46 @@ from django.views.generic import TemplateView, CreateView, UpdateView
 from django.contrib import messages
 from django.urls import reverse_lazy
 
-from ..forms import UserRegistrationForm, UserProfileForm
+from ..forms import UserRegistrationForm, UserProfileForm, CustomAuthenticationForm
 from ..models import UserProfile
 
 
 class CustomLoginView(LoginView):
     """Custom login view"""
     template_name = 'core/auth/login.html'
+    form_class = CustomAuthenticationForm
     redirect_authenticated_user = True
     
     def get_success_url(self):
         return reverse_lazy('core:dashboard')
     
     def form_invalid(self, form):
-        messages.error(self.request, 'Invalid username or password.')
+        messages.error(self.request, 'Invalid email/username or password.')
         return super().form_invalid(form)
 
 
 class CustomLogoutView(LogoutView):
     """Custom logout view"""
-    next_page = 'core:home'
+    template_name = 'core/auth/logout.html'
+    next_page = 'core:login'  # Fallback redirect
+    http_method_names = ['get', 'post']  # Allow both GET and POST
     
-    def dispatch(self, request, *args, **kwargs):
-        messages.success(request, 'You have been logged out successfully.')
-        return super().dispatch(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests to logout"""
+        if request.user.is_authenticated:
+            # Log out the user
+            from django.contrib.auth import logout
+            logout(request)
+            messages.success(request, 'You have been logged out successfully.')
+        
+        # Show logout confirmation page
+        return self.render_to_response(self.get_context_data())
+    
+    def post(self, request, *args, **kwargs):
+        """Handle POST requests to logout"""
+        if request.user.is_authenticated:
+            messages.success(request, 'You have been logged out successfully.')
+        return super().post(request, *args, **kwargs)
 
 
 class RegisterView(CreateView):
@@ -44,15 +60,7 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         
-        # Create user profile
-        UserProfile.objects.create(
-            user=self.object,
-            year_of_study=form.cleaned_data['year_of_study'],
-            college_name=form.cleaned_data['college_name'],
-            phone_number=form.cleaned_data.get('phone_number', '')
-        )
-        
-        # Log in the user
+        # Log in the user (profile is created in form's save method)
         login(self.request, self.object)
         messages.success(self.request, 'Registration successful! Welcome to MedPrep.')
         
