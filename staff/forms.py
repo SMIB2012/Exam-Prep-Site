@@ -444,7 +444,17 @@ class UserCreateForm(forms.ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={
             'class': 'form-check-input'
-        })
+        }),
+        help_text="Check if this user should have premium access"
+    )
+    premium_expires_at = forms.DateTimeField(
+        required=False,
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control',
+            'type': 'datetime-local',
+            'id': 'id_premium_expires_at'
+        }),
+        help_text="When the premium subscription expires (leave blank for 1 year default)"
     )
     is_active = forms.BooleanField(
         initial=True,
@@ -668,3 +678,73 @@ class UserCreateForm(forms.ModelForm):
             cleaned_data['year_of_study'] = ''
         
         return cleaned_data
+
+
+class BulkUserUploadForm(forms.Form):
+    """Form for bulk uploading users via CSV/Excel"""
+    
+    csv_file = forms.FileField(
+        label="CSV/Excel File",
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': '.csv,.xlsx,.xls',
+            'id': 'csvFile'
+        }),
+        help_text="Upload a CSV or Excel file with user data. Maximum file size: 5MB"
+    )
+    
+    default_password = forms.CharField(
+        max_length=50,
+        initial="TempPass123!",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Default password for all users'
+        }),
+        help_text="Default password for users (can be overridden in CSV)"
+    )
+    
+    default_role = forms.ChoiceField(
+        choices=[
+            ('student', 'Student'),
+            ('faculty', 'Faculty'),
+            ('admin', 'Admin'),
+        ],
+        initial='student',
+        widget=forms.Select(attrs={
+            'class': 'form-control'
+        }),
+        help_text="Default role for users (can be overridden in CSV)"
+    )
+    
+    send_welcome_emails = forms.BooleanField(
+        initial=True,
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input'
+        }),
+        help_text="Send welcome emails to all created users"
+    )
+    
+    skip_errors = forms.BooleanField(
+        initial=True,
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input'
+        }),
+        help_text="Skip rows with errors and continue with valid rows"
+    )
+    
+    def clean_csv_file(self):
+        """Validate uploaded file"""
+        file = self.cleaned_data.get('csv_file')
+        if file:
+            # Check file size (5MB limit)
+            if file.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("File size cannot exceed 5MB.")
+            
+            # Check file extension
+            filename = file.name.lower()
+            if not (filename.endswith('.csv') or filename.endswith('.xlsx') or filename.endswith('.xls')):
+                raise forms.ValidationError("Please upload a CSV or Excel file.")
+        
+        return file

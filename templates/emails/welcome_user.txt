@@ -1,0 +1,33 @@
+Welcome to MedAce - Your Medical Education Partner!
+
+Dear {{ user.first_name }} {{ user.last_name }},
+
+Welcome to MedAce! Your account has been successfully created by our administration team.
+
+Your Login Details:
+- Email: {{ user.email }}
+- Password: {{ password }}
+- Login URL: {{ login_url }}
+
+For your security, we recommend changing your password after your first login.
+
+About MedAce:
+MedAce is Pakistan's premier medical education platform, designed specifically for MBBS students. We provide:
+- Comprehensive question banks
+- Interactive study materials
+- Performance analytics
+- Peer collaboration tools
+
+Getting Started:
+1. Visit {{ login_url }}
+2. Log in with your credentials
+3. Complete your profile
+4. Start exploring our study materials
+
+If you have any questions or need assistance, please don't hesitate to contact our support team.
+
+Best regards,
+The MedAce Team
+
+---
+This is an automated message. Please do not reply to this email.

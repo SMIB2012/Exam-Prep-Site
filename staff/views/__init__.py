@@ -1,6 +1,6 @@
 from .auth_views import AdminLoginView, AdminLogoutView
 from .dashboard_views import DashboardView
-from .user_views import UserListView, UserDetailView, UserEditView
+from .user_views import UserListView, UserDetailView, UserEditView, UserCreateView, BulkUserUploadView
 from .question_views import (
     QuestionListView, QuestionCreateView, QuestionEditView, 
     QuestionDeleteView, BulkQuestionUploadView
@@ -21,7 +21,7 @@ from .settings_views import SettingsView, ActivityLogsView
 
 __all__ = [
     'AdminLoginView', 'AdminLogoutView', 'DashboardView',
-    'UserListView', 'UserDetailView', 'UserEditView',
+    'UserListView', 'UserDetailView', 'UserEditView', 'UserCreateView', 'BulkUserUploadView',
     'QuestionListView', 'QuestionCreateView', 'QuestionEditView', 
     'QuestionDeleteView', 'BulkQuestionUploadView',
     'SubjectListView', 'SubjectCreateView', 'SubjectEditView',

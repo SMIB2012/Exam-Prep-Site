@@ -1,0 +1,472 @@
+{% extends 'staff/base_admin.html' %}
+{% load static %}
+
+{% block title %}Bulk Upload Users - MedAce Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #E3E7ED;
+    }
+    
+    .step-number {
+        background: #0057A3;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+    }
+    
+    .step-title {
+        color: #0057A3;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .preview-table {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-top: 1.5rem;
+    }
+    
+    .preview-table table {
+        margin: 0;
+    }
+    
+    .preview-table th {
+        background: #F5F7FA;
+        color: #0057A3;
+        font-weight: 600;
+        border-bottom: 2px solid #E3E7ED;
+    }
+    
+    .error-row {
+        background-color: #fff5f5 !important;
+        border-left: 4px solid #FF7043;
+    }
+    
+    .error-badge {
+        background: #FF7043;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+    }
+    
+    .success-badge {
+        background: #43B284;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .file-upload-area {
+        border: 2px dashed #E3E7ED;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+    
+    .file-upload-area:hover {
+        border-color: #0057A3;
+        background: #f8fafc;
+    }
+    
+    .file-upload-area.dragover {
+        border-color: #0057A3;
+        background: #f0f8ff;
+    }
+    
+    .upload-icon {
+        font-size: 3rem;
+        color: #0057A3;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-primary {
+        background: #0057A3;
+        border-color: #0057A3;
+    }
+    
+    .btn-primary:hover {
+        background: #004080;
+        border-color: #004080;
+    }
+    
+    .btn-outline-primary {
+        color: #0057A3;
+        border-color: #0057A3;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #0057A3;
+        border-color: #0057A3;
+    }
+    
+    .alert-success {
+        background: #43B284;
+        border-color: #43B284;
+        color: white;
+    }
+    
+    .alert-danger {
+        background: #FF7043;
+        border-color: #FF7043;
+        color: white;
+    }
+    
+    .form-check-input:checked {
+        background-color: #0057A3;
+        border-color: #0057A3;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'staff:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'staff:user_list' %}">Users</a></li>
+        <li class="breadcrumb-item active">Bulk Upload</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0" style="color: #0057A3;">👥 Bulk Upload Users</h1>
+    <div>
+        <a href="{% url 'staff:user_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Users
+        </a>
+    </div>
+</div>
+
+<!-- Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Step 1: Download Template (Separate Form) -->
+<div class="upload-card">
+    <div class="step-header">
+        <div class="step-number">1</div>
+        <h2 class="step-title">Download Template</h2>
+    </div>
+    <p class="text-muted mb-3">
+        Download the CSV template to ensure your data is formatted correctly. The template includes all required columns and sample data.
+    </p>
+    <!-- Separate form for template download -->
+    <form method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" name="action" value="download_template" class="btn btn-outline-primary">
+            <i class="fas fa-download"></i> Download CSV Template
+        </button>
+    </form>
+    <div class="mt-2">
+        <small class="text-muted">
+            <strong>Required columns:</strong> first_name, last_name, email<br>
+            <strong>Optional columns:</strong> password, role, year_of_study, province, college_type, college_name, phone_number, is_premium, is_active
+        </small>
+    </div>
+</div>
+
+<!-- Main Upload Form -->
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Step 2: Upload File -->
+    <div class="upload-card">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <h2 class="step-title">Upload Your File</h2>
+        </div>
+        
+        <div class="file-upload-area" id="fileUploadArea">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <p class="mb-2"><strong>Choose a CSV or Excel file</strong></p>
+            <p class="text-muted mb-3">Drag & drop your file here or click to browse</p>
+            {{ form.csv_file }}
+            {% if form.csv_file.errors %}
+                <div class="text-danger mt-2">
+                    {% for error in form.csv_file.errors %}
+                        <small>{{ error }}</small><br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <label for="{{ form.default_password.id_for_label }}" class="form-label">Default Password</label>
+                {{ form.default_password }}
+                <div class="form-text">{{ form.default_password.help_text }}</div>
+                {% if form.default_password.errors %}
+                    <div class="text-danger">
+                        {% for error in form.default_password.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.default_role.id_for_label }}" class="form-label">Default Role</label>
+                {{ form.default_role }}
+                <div class="form-text">{{ form.default_role.help_text }}</div>
+                {% if form.default_role.errors %}
+                    <div class="text-danger">
+                        {% for error in form.default_role.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-check">
+                    {{ form.send_welcome_emails }}
+                    <label class="form-check-label" for="{{ form.send_welcome_emails.id_for_label }}">
+                        {{ form.send_welcome_emails.label }}
+                    </label>
+                    <div class="form-text">{{ form.send_welcome_emails.help_text }}</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    {{ form.skip_errors }}
+                    <label class="form-check-label" for="{{ form.skip_errors.id_for_label }}">
+                        {{ form.skip_errors.label }}
+                    </label>
+                    <div class="form-text">{{ form.skip_errors.help_text }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" name="action" value="upload" class="btn btn-primary">
+                <i class="fas fa-upload"></i> Upload & Preview
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 3: Preview & Confirm -->
+    {% if preview_data %}
+    <div class="upload-card">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <h2 class="step-title">Preview & Confirm</h2>
+        </div>
+
+        <!-- Summary -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center border-success">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ preview_data.valid_rows|length }}</h3>
+                        <p class="card-text">Valid Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center border-danger">
+                    <div class="card-body">
+                        <h3 class="text-danger">{{ preview_data.error_rows|length }}</h3>
+                        <p class="card-text">Errors Found</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center border-info">
+                    <div class="card-body">
+                        <h3 class="text-info">{{ preview_data.valid_rows|length|add:preview_data.error_rows|length }}</h3>
+                        <p class="card-text">Total Rows</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Valid Users Preview -->
+        {% if preview_data.valid_rows %}
+        <h4 class="text-success mb-3">✅ Valid Users (First 10)</h4>
+        <div class="preview-table">
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Year</th>
+                        <th>Province</th>
+                        <th>Premium</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in preview_data.valid_rows|slice:":10" %}
+                    <tr>
+                        <td>{{ row.first_name }} {{ row.last_name }}</td>
+                        <td>{{ row.email }}</td>
+                        <td>
+                            <span class="badge bg-primary">{{ row.role|title }}</span>
+                        </td>
+                        <td>{{ row.year_of_study|default:"N/A" }}</td>
+                        <td>{{ row.province|default:"N/A" }}</td>
+                        <td>
+                            {% if row.is_premium %}
+                                <span class="badge bg-warning">Premium</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Free</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if row.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if preview_data.valid_rows|length > 10 %}
+            <p class="text-muted mt-2">... and {{ preview_data.valid_rows|length|add:"-10" }} more valid users</p>
+        {% endif %}
+        {% endif %}
+
+        <!-- Error Rows -->
+        {% if preview_data.error_rows %}
+        <h4 class="text-danger mb-3 mt-4">❌ Rows with Errors</h4>
+        <div class="preview-table">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Row #</th>
+                        <th>Data</th>
+                        <th>Errors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for error_row in preview_data.error_rows %}
+                    <tr class="error-row">
+                        <td><strong>{{ error_row.row_number }}</strong></td>
+                        <td>
+                            <small>
+                                {% for key, value in error_row.data.items %}
+                                    <strong>{{ key }}:</strong> "{{ value }}"{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </small>
+                        </td>
+                        <td>
+                            {% for error in error_row.errors %}
+                                <span class="error-badge">{{ error }}</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="mt-4 d-flex gap-2">
+            {% if preview_data.valid_rows %}
+            <button type="submit" name="action" value="confirm" class="btn btn-success">
+                <i class="fas fa-check"></i> Confirm Import ({{ preview_data.valid_rows|length }} users)
+            </button>
+            {% endif %}
+            <button type="button" class="btn btn-secondary" onclick="location.reload()">
+                <i class="fas fa-redo"></i> Upload Different File
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('{{ form.csv_file.id_for_label }}');
+    const uploadArea = document.getElementById('fileUploadArea');
+    
+    // File upload drag and drop
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            updateFileDisplay();
+        }
+    });
+    
+    uploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', updateFileDisplay);
+    
+    function updateFileDisplay() {
+        const file = fileInput.files[0];
+        const uploadIcon = uploadArea.querySelector('.upload-icon');
+        const text = uploadArea.querySelector('p');
+        
+        if (file) {
+            uploadIcon.innerHTML = '<i class="fas fa-file-csv text-success"></i>';
+            text.innerHTML = `<strong>${file.name}</strong><br><small class="text-muted">${(file.size / 1024 / 1024).toFixed(2)} MB</small>`;
+        }
+    }
+});
+</script>
+{% endblock %}

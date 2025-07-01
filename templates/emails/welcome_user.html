@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to MedAce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0057A3, #004080);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            background: #fff;
+            padding: 30px;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        .login-box {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .login-box h3 {
+            color: #0057A3;
+            margin-top: 0;
+        }
+        .login-detail {
+            margin: 10px 0;
+        }
+        .login-detail strong {
+            color: #0057A3;
+        }
+        .btn {
+            display: inline-block;
+            background: #0057A3;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .btn:hover {
+            background: #004080;
+        }
+        .features {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .features ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .features li {
+            margin: 8px 0;
+        }
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Welcome to MedAce!</h1>
+        <p>Your Medical Education Journey Starts Here</p>
+    </div>
+    
+    <div class="content">
+        <h2>Dear {{ user.first_name }} {{ user.last_name }},</h2>
+        
+        <p>Welcome to <strong>MedAce</strong>! Your account has been successfully created by our administration team. We're excited to have you join Pakistan's premier medical education platform.</p>
+        
+        <div class="login-box">
+            <h3>🔑 Your Login Details</h3>
+            <div class="login-detail">
+                <strong>Email:</strong> {{ user.email }}
+            </div>
+            <div class="login-detail">
+                <strong>Password:</strong> {{ password }}
+            </div>
+            <div class="login-detail">
+                <strong>Login URL:</strong> <a href="{{ login_url }}">{{ login_url }}</a>
+            </div>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Security Notice:</strong> For your security, we recommend changing your password after your first login.
+        </div>
+        
+        <div class="features">
+            <h3>🏥 About MedAce</h3>
+            <p>MedAce is designed specifically for MBBS students in Pakistan. Our platform provides:</p>
+            <ul>
+                <li><strong>Comprehensive Question Banks</strong> - Practice with thousands of MCQs</li>
+                <li><strong>Interactive Study Materials</strong> - Notes, videos, and flashcards</li>
+                <li><strong>Performance Analytics</strong> - Track your progress and identify weak areas</li>
+                <li><strong>Peer Collaboration</strong> - Connect with fellow medical students</li>
+            </ul>
+        </div>
+        
+        <h3>🚀 Getting Started</h3>
+        <ol>
+            <li>Click the login button below or visit the login URL</li>
+            <li>Log in with your credentials</li>
+            <li>Complete your profile information</li>
+            <li>Start exploring our study materials</li>
+        </ol>
+        
+        <div style="text-align: center;">
+            <a href="{{ login_url }}" class="btn">Login to MedAce</a>
+        </div>
+        
+        <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+        
+        <p><strong>Best regards,</strong><br>
+        The MedAce Team</p>
+    </div>
+    
+    <div class="footer">
+        This is an automated message. Please do not reply to this email.
+    </div>
+</body>
+</html>

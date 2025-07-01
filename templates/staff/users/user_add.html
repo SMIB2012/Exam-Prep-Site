@@ -285,6 +285,22 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="{{ form.premium_expires_at.id_for_label }}" class="form-label">
+                            Premium Expiration Date
+                        </label>
+                        {{ form.premium_expires_at }}
+                        {% if form.premium_expires_at.help_text %}
+                            <small class="form-text text-muted">{{ form.premium_expires_at.help_text }}</small>
+                        {% endif %}
+                        {% if form.premium_expires_at.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.premium_expires_at.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             
             <!-- Additional Options Row -->
@@ -322,5 +338,28 @@
 
 {% block extra_js %}
 <script src="{% static 'staff/js/user_add.js' %}"></script>
+<script>
+// Show/hide premium expiration field based on premium checkbox
+document.addEventListener('DOMContentLoaded', function() {
+    const premiumCheckbox = document.getElementById('{{ form.is_premium.id_for_label }}');
+    const premiumExpiryField = document.getElementById('{{ form.premium_expires_at.id_for_label }}').closest('.form-group');
+    
+    function togglePremiumExpiryField() {
+        if (premiumCheckbox.checked) {
+            premiumExpiryField.style.display = 'block';
+        } else {
+            premiumExpiryField.style.display = 'none';
+            // Clear the field when hiding
+            document.getElementById('{{ form.premium_expires_at.id_for_label }}').value = '';
+        }
+    }
+    
+    // Initial state
+    togglePremiumExpiryField();
+    
+    // Listen for changes
+    premiumCheckbox.addEventListener('change', togglePremiumExpiryField);
+});
+</script>
 {% endblock %}
 {% endblock %}

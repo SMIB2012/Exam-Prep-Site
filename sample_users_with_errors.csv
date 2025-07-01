@@ -1,0 +1,5 @@
+first_name,last_name,email,password,role,year_of_study,province,college_type,college_name,phone_number,is_premium,is_active
+Valid,User,valid.user@example.com,ValidPass123!,student,1st_year,Punjab,Public,King Edward Medical University (Lahore),+92-300-1111111,FALSE,TRUE
+,NoFirstName,no.firstname@example.com,Pass123!,student,1st_year,Punjab,Public,King Edward Medical University (Lahore),+92-300-2222222,FALSE,TRUE
+Invalid,Email,not-an-email,Pass123!,student,1st_year,Punjab,Public,King Edward Medical University (Lahore),+92-300-3333333,FALSE,TRUE
+Invalid,Role,invalid.role@example.com,Pass123!,invalid_role,1st_year,Punjab,Public,King Edward Medical University (Lahore),+92-300-4444444,FALSE,TRUE
