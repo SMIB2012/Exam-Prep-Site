@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db import models  # Added import for models to support tags relationship
 
 
 class UserProfile(models.Model):
@@ -28,6 +29,9 @@ class UserProfile(models.Model):
     total_quizzes_taken = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Tags/Groups relationship
+    tags = models.ManyToManyField('Tag', blank=True, help_text="Tags/groups assigned to this user")
     
     class Meta:
         verbose_name = 'User Profile'
