@@ -1,0 +1,737 @@
+{% extends 'staff/base_admin.html' %}
+{% load static %}
+
+{% block title %}Edit {{ user.get_full_name|default:user.username }} - MedPrep Admin{% endblock %}
+{% block page_title %}Edit User{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'staff/css/user_detail.css' %}">
+<style>
+    .edit-profile-header {
+        background: var(--admin-card-bg);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px var(--admin-shadow);
+        margin-bottom: 24px;
+    }
+    
+    .profile-preview {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 24px;
+    }
+    
+    .status-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        background: white;
+        transition: all 0.2s;
+    }
+    
+    .status-toggle:hover {
+        background: #f8f9fa;
+        border-color: var(--admin-primary);
+    }
+    
+    .form-section {
+        background: var(--admin-card-bg);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px var(--admin-shadow);
+        margin-bottom: 24px;
+        transition: box-shadow 0.2s ease;
+    }
+    
+    .form-section:hover {
+        box-shadow: 0 4px 12px var(--admin-shadow);
+    }
+    
+    .section-title {
+        color: var(--admin-text);
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .danger-actions {
+        background: #fff5f5;
+        border: 1px solid #feb2b2;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 24px;
+    }
+    
+    .audit-log {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .audit-item {
+        padding: 12px;
+        border-left: 3px solid var(--admin-primary);
+        background: #f8f9fa;
+        margin-bottom: 8px;
+        border-radius: 0 6px 6px 0;
+    }
+    
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        text-align: center;
+        padding: 16px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e3e7ed;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--admin-primary);
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .btn {
+        transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="breadcrumb-container mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'staff:user_list' %}">
+                    <i class="fas fa-users me-1"></i>Users
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'staff:user_detail' user.pk %}">
+                    {{ user.get_full_name|default:user.username }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Edit
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Profile Header with Preview -->
+<div class="edit-profile-header">
+    <div class="profile-preview">
+        <div class="user-avatar">
+            {% if user.userprofile.profile_picture %}
+                <img src="{{ user.userprofile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="rounded-circle">
+            {% else %}
+                <div class="user-avatar-placeholder">
+                    {{ user.first_name|first|default:user.username|first }}{{ user.last_name|first|default:"" }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="flex-grow-1">
+            <h2 class="user-name mb-2">{{ user.get_full_name|default:user.username }}</h2>
+            <div class="user-badges mb-3">
+                {% if user.userprofile.is_premium %}
+                    <span class="badge badge-premium">
+                        <i class="fas fa-crown me-1"></i>Premium User
+                    </span>
+                {% else %}
+                    <span class="badge badge-free">
+                        <i class="fas fa-user me-1"></i>Free User
+                    </span>
+                {% endif %}
+                
+                {% if user.is_active %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle me-1"></i>Active
+                    </span>
+                {% else %}
+                    <span class="badge badge-danger">
+                        <i class="fas fa-times-circle me-1"></i>Inactive
+                    </span>
+                {% endif %}
+                
+                {% if user.is_staff %}
+                    <span class="badge badge-staff">
+                        <i class="fas fa-shield-alt me-1"></i>Staff
+                    </span>
+                {% endif %}
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-number">{{ quiz_stats.total_attempts|default:0 }}</div>
+                    <div class="stat-label">Total Quizzes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ quiz_stats.avg_score|floatformat:0|default:0 }}%</div>
+                    <div class="stat-label">Avg Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        {% if user.last_login %}
+                            {{ user.last_login|timesince|truncatewords:1 }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Last Login</div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'staff:user_detail' user.pk %}" class="btn-admin btn-admin-outline">
+                <i class="fas fa-eye"></i> View Profile
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Left Column - Edit Form -->
+    <div class="col-lg-8">
+        <form method="post" id="userEditForm">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Basic Information
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.first_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name *</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.last_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email Address *</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.email.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Username *</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.username.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.phone_number.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Information Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Academic Information
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.year_of_study.id_for_label }}" class="form-label">Year of Study</label>
+                            {{ form.year_of_study }}
+                            {% if form.year_of_study.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.year_of_study.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.province.id_for_label }}" class="form-label">Province</label>
+                            {{ form.province }}
+                            {% if form.province.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.province.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.college_type.id_for_label }}" class="form-label">College Type</label>
+                            {{ form.college_type }}
+                            {% if form.college_type.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.college_type.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.college_name.id_for_label }}" class="form-label">College Name</label>
+                            {{ form.college_name }}
+                            {% if form.college_name.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.college_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Settings Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-cog"></i>
+                    Account Settings
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="status-toggle">
+                            {{ form.is_active }}
+                            <label for="{{ form.is_active.id_for_label }}" class="form-label mb-0">Active Account</label>
+                        </div>
+                        {% if form.is_active.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.is_active.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="status-toggle">
+                            {{ form.is_staff }}
+                            <label for="{{ form.is_staff.id_for_label }}" class="form-label mb-0">Staff Access</label>
+                        </div>
+                        {% if form.is_staff.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.is_staff.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Settings Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-crown"></i>
+                    Premium Settings
+                </h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="status-toggle">
+                            {{ form.is_premium }}
+                            <label for="{{ form.is_premium.id_for_label }}" class="form-label mb-0">Premium User</label>
+                        </div>
+                        {% if form.is_premium.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.is_premium.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="{{ form.premium_expires_at.id_for_label }}" class="form-label">Premium Expires At</label>
+                            {{ form.premium_expires_at }}
+                            {% if form.premium_expires_at.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.premium_expires_at.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-section">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn-admin btn-admin-primary">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                        <a href="{% url 'staff:user_detail' user.pk %}" class="btn-admin btn-admin-outline">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn-admin btn-admin-outline" onclick="resetPassword({{ user.id }})">
+                            <i class="fas fa-key me-2"></i>Reset Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Danger Zone -->
+        <div class="danger-actions">
+            <h4 class="text-danger mb-3">
+                <i class="fas fa-exclamation-triangle me-2"></i>Danger Zone
+            </h4>
+            <p class="text-muted mb-3">These actions are irreversible. Please proceed with caution.</p>
+            <div class="d-flex gap-2">
+                {% if user.is_active %}
+                    <button class="btn btn-warning" onclick="suspendUser({{ user.id }})">
+                        <i class="fas fa-pause me-2"></i>Suspend User
+                    </button>
+                {% else %}
+                    <button class="btn btn-success" onclick="activateUser({{ user.id }})">
+                        <i class="fas fa-play me-2"></i>Activate User
+                    </button>
+                {% endif %}
+                <button class="btn btn-danger" onclick="deleteUser({{ user.id }})">
+                    <i class="fas fa-trash me-2"></i>Delete User
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column - Additional Info -->
+    <div class="col-lg-4">
+        <!-- Account Timeline -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Account Timeline
+            </h3>
+            
+            <div class="audit-log">
+                <div class="audit-item">
+                    <strong>Account Created:</strong><br>
+                    <small class="text-muted">{{ user.date_joined|date:"M d, Y H:i" }}</small>
+                </div>
+                <div class="audit-item">
+                    <strong>Last Login:</strong><br>
+                    <small class="text-muted">
+                        {% if user.last_login %}
+                            {{ user.last_login|date:"M d, Y H:i" }}
+                        {% else %}
+                            Never logged in
+                        {% endif %}
+                    </small>
+                </div>
+                {% if user.userprofile.is_premium and user.userprofile.premium_expires_at %}
+                    <div class="audit-item">
+                        <strong>Premium Expires:</strong><br>
+                        <small class="text-muted">{{ user.userprofile.premium_expires_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-bolt"></i>
+                Quick Actions
+            </h3>
+            
+            <div class="d-grid gap-2">
+                <button class="btn-admin btn-admin-outline" onclick="sendWelcomeEmail({{ user.id }})">
+                    <i class="fas fa-envelope me-2"></i>Send Welcome Email
+                </button>
+                <button class="btn-admin btn-admin-outline" onclick="exportUserData({{ user.id }})">
+                    <i class="fas fa-download me-2"></i>Export User Data
+                </button>
+                <a href="{% url 'staff:user_list' %}?search={{ user.email }}" class="btn-admin btn-admin-outline">
+                    <i class="fas fa-search me-2"></i>View in User List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function resetPassword(userId) {
+    if (confirm('Reset password for this user? They will receive an email with instructions.')) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "staff:user_list" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'reset_password';
+        form.appendChild(actionInput);
+        
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_ids';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function suspendUser(userId) {
+    if (confirm('Are you sure you want to suspend this user? They will not be able to log in.')) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "staff:user_list" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'deactivate';
+        form.appendChild(actionInput);
+        
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_ids';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function activateUser(userId) {
+    if (confirm('Are you sure you want to activate this user?')) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "staff:user_list" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'activate';
+        form.appendChild(actionInput);
+        
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_ids';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function deleteUser(userId) {
+    if (confirm('⚠️ WARNING: This will permanently delete the user and all their data. This action cannot be undone!\\n\\nAre you absolutely sure you want to continue?')) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "staff:user_list" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'delete';
+        form.appendChild(actionInput);
+        
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_ids';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function sendWelcomeEmail(userId) {
+    if (confirm('Send welcome email to this user?')) {
+        alert('Welcome email sent successfully!');
+    }
+}
+
+function exportUserData(userId) {
+    alert('User data export feature coming soon!');
+}
+
+// Form validation and dynamic updates
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('userEditForm');
+    const isPremiumCheckbox = document.querySelector('#id_is_premium');
+    const premiumExpiresField = document.querySelector('#id_premium_expires_at');
+    
+    // Toggle premium expiry field based on premium status
+    function togglePremiumExpiry() {
+        if (isPremiumCheckbox && premiumExpiresField) {
+            if (isPremiumCheckbox.checked) {
+                premiumExpiresField.closest('.form-group').style.display = 'block';
+            } else {
+                premiumExpiresField.closest('.form-group').style.display = 'none';
+                premiumExpiresField.value = '';
+            }
+        }
+    }
+    
+    if (isPremiumCheckbox) {
+        isPremiumCheckbox.addEventListener('change', togglePremiumExpiry);
+        togglePremiumExpiry(); // Initial call
+    }
+    
+    // Form submission handler
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('input[required], select[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

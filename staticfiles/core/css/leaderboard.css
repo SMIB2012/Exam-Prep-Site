@@ -1,0 +1,378 @@
+/* Leaderboard Styles with Blue/Green/White/Orange Theme */
+
+/* Header */
+.leaderboard-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.leaderboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+    opacity: 0.3;
+}
+
+.rank-badge {
+    border: 2px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* Navigation Pills */
+.nav-pills .nav-link {
+    background: none;
+    border: 2px solid var(--light-gray);
+    color: var(--text-dark);
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.nav-pills .nav-link:hover {
+    background: var(--light-background);
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+    border-color: var(--primary-blue);
+    color: white;
+    box-shadow: 0 4px 15px rgba(34, 139, 202, 0.3);
+}
+
+/* Podium Section */
+.podium-section {
+    background: linear-gradient(135deg, var(--light-background) 0%, white 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.podium-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.podium-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    transition: all 0.3s ease;
+}
+
+.podium-card.rank-1::before {
+    background: linear-gradient(90deg, var(--accent-gold) 0%, var(--accent-orange) 100%);
+}
+
+.podium-card.rank-2::before {
+    background: linear-gradient(90deg, var(--medium-gray) 0%, var(--light-gray) 100%);
+}
+
+.podium-card.rank-3::before {
+    background: linear-gradient(90deg, var(--accent-orange) 0%, var(--primary-orange) 100%);
+}
+
+.podium-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.podium-position {
+    margin-bottom: 1rem;
+}
+
+.podium-position i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.position-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.user-avatar {
+    margin-bottom: 1rem;
+}
+
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(34, 139, 202, 0.3);
+}
+
+.user-name {
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.user-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Table Styles */
+.table {
+    --bs-table-bg: transparent;
+}
+
+.table-primary {
+    --bs-table-bg: var(--primary-blue);
+    --bs-table-color: white;
+}
+
+.table-primary th {
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+}
+
+.table-success {
+    --bs-table-bg: var(--primary-green);
+    --bs-table-color: white;
+}
+
+.table-success th {
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--light-gray);
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: var(--light-background);
+    transform: scale(1.002);
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border: none;
+}
+
+.table-warning {
+    --bs-table-bg: rgba(255, 193, 7, 0.1);
+    border-left: 4px solid var(--accent-gold);
+}
+
+.rank-badge-small {
+    font-weight: bold;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar-small {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--light-gray) 0%, var(--medium-gray) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+/* Progress Bars */
+.progress {
+    height: 8px;
+    background-color: var(--light-background);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-sm {
+    height: 6px;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+/* Badges */
+.badge {
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 15px;
+}
+
+.bg-orange {
+    background-color: var(--primary-orange) !important;
+}
+
+.text-orange {
+    color: var(--primary-orange) !important;
+}
+
+.text-navy {
+    color: var(--accent-navy) !important;
+}
+
+/* Call to Action */
+.cta-section {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="0,0 100,0 100,80 0,100" fill="rgba(255,255,255,0.05)"/></svg>');
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%) !important;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 3rem 1rem;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+/* Animations */
+.podium-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.podium-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.podium-card.rank-1.animate-in {
+    transition-delay: 0.2s;
+}
+
+.podium-card.rank-2.animate-in {
+    transition-delay: 0.4s;
+}
+
+.podium-card.rank-3.animate-in {
+    transition-delay: 0.6s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .leaderboard-header {
+        text-align: center;
+    }
+    
+    .rank-badge {
+        margin-top: 1rem;
+    }
+    
+    .podium-section {
+        padding: 1rem;
+    }
+    
+    .podium-card {
+        margin-bottom: 1rem;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .user-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .stat-item {
+        padding: 0.5rem;
+        background: var(--light-background);
+        border-radius: 8px;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+/* Custom scrollbar for table */
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: var(--light-background);
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--primary-blue);
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-blue);
+}

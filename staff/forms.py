@@ -748,3 +748,68 @@ class BulkUserUploadForm(forms.Form):
                 raise forms.ValidationError("Please upload a CSV or Excel file.")
         
         return file
+
+
+class UserEditForm(forms.ModelForm):
+    """Comprehensive form for editing users by admin"""
+    
+    # User fields
+    first_name = forms.CharField(
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'})
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'})
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email address'})
+    )
+    username = forms.CharField(
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter username'})
+    )
+    is_active = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    is_staff = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    
+    # Profile fields
+    year_of_study = forms.ChoiceField(
+        choices=[('', 'Select Year of Study')] + UserProfile.YEAR_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    province = forms.ChoiceField(
+        choices=[('', 'Select Province'), ('Punjab', 'Punjab'), ('Sindh', 'Sindh'), 
+                ('Khyber Pakhtunkhwa', 'Khyber Pakhtunkhwa'), ('Balochistan', 'Balochistan'), 
+                ('Azad Jammu & Kashmir', 'Azad Jammu & Kashmir')],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    college_type = forms.ChoiceField(
+        choices=[('', 'Select College Type'), ('Public', 'Public'), ('Private', 'Private')],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    college_name = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter college name'})
+    )
+    phone_number = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'})
+    )
+    is_premium = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    premium_expires_at = forms.DateTimeField(
+        required=False,
+        widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'})
+    )
+    
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'is_active', 'is_staff']

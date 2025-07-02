@@ -1,0 +1,435 @@
+/* User Detail Page Styles - MedPrep Admin */
+
+/* Breadcrumb */
+.breadcrumb-container {
+    background: transparent;
+}
+
+.breadcrumb {
+    background: var(--admin-card-bg);
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 4px var(--admin-shadow);
+}
+
+.breadcrumb-item a {
+    color: var(--admin-primary);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--admin-text);
+    font-weight: 500;
+}
+
+/* Page Header */
+.page-header {
+    background: var(--admin-card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px var(--admin-shadow);
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    position: relative;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--admin-primary), #0077CC);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+}
+
+.user-name {
+    color: var(--admin-text);
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.user-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Badges */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+}
+
+.badge-premium {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+}
+
+.badge-free {
+    background: #6c757d;
+    color: white;
+}
+
+.badge-success {
+    background: var(--admin-success);
+    color: white;
+}
+
+.badge-danger {
+    background: var(--admin-warning);
+    color: white;
+}
+
+.badge-staff {
+    background: var(--admin-primary);
+    color: white;
+}
+
+.badge-admin {
+    background: linear-gradient(135deg, #6f42c1, #8a2be2);
+    color: white;
+}
+
+.badge-student {
+    background: #17a2b8;
+    color: white;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.badge-study-year {
+    background: #e9ecef;
+    color: var(--admin-text);
+    border: 1px solid #dee2e6;
+}
+
+.badge-college-type {
+    background: #f8f9fa;
+    color: var(--admin-text);
+    border: 1px solid #dee2e6;
+}
+
+/* Admin Cards */
+.admin-card {
+    background: var(--admin-card-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--admin-shadow);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.admin-card-header {
+    background: #f8f9fa;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--admin-divider);
+}
+
+.admin-card-title {
+    color: var(--admin-text);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.admin-card-title i {
+    color: var(--admin-primary);
+}
+
+.admin-card-body {
+    padding: 24px;
+}
+
+/* Info Items */
+.info-item {
+    margin-bottom: 20px;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.info-value {
+    color: var(--admin-text);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.info-value a {
+    color: var(--admin-primary);
+}
+
+.info-value a:hover {
+    color: #0077CC;
+}
+
+/* Status Items */
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.status-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.status-label {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-value {
+    color: var(--admin-text);
+    font-weight: 500;
+    text-align: right;
+}
+
+/* Stat Boxes */
+.stat-box {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--admin-primary);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    color: var(--admin-text-light);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Activity Timeline */
+.activity-timeline {
+    position: relative;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.activity-item:last-child {
+    margin-bottom: 0;
+}
+
+.activity-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    width: 2px;
+    height: calc(100% - 20px);
+    background: #e9ecef;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--admin-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+    margin-right: 16px;
+    flex-shrink: 0;
+    z-index: 1;
+    position: relative;
+}
+
+.activity-content {
+    flex: 1;
+    padding-top: 4px;
+}
+
+.activity-title {
+    color: var(--admin-text);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.activity-details {
+    color: var(--admin-text-light);
+    font-size: 0.875rem;
+}
+
+/* Feature List */
+.feature-list {
+    margin-top: 8px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--admin-text);
+    margin-bottom: 6px;
+}
+
+.feature-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Admin Buttons */
+.btn-admin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 8px;
+}
+
+.btn-admin-primary {
+    background: var(--admin-primary);
+    color: white;
+}
+
+.btn-admin-primary:hover {
+    background: #0077CC;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 87, 163, 0.3);
+}
+
+.btn-admin-outline {
+    background: transparent;
+    color: var(--admin-primary);
+    border: 1px solid var(--admin-primary);
+}
+
+.btn-admin-outline:hover {
+    background: var(--admin-primary);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 87, 163, 0.2);
+}
+
+/* Dropdown customization */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    color: var(--admin-text);
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item:hover {
+    background: #f8f9fa;
+    color: var(--admin-primary);
+}
+
+.dropdown-item i {
+    width: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 16px;
+    }
+    
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .user-name {
+        font-size: 1.4rem;
+    }
+    
+    .admin-card-body {
+        padding: 16px;
+    }
+    
+    .admin-card-header {
+        padding: 12px 16px;
+    }
+    
+    .stat-box {
+        padding: 16px;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .user-badges {
+        margin-top: 12px;
+    }
+    
+    .page-header .row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .page-header .col-auto {
+        align-self: stretch;
+    }
+    
+    .page-header .d-flex {
+        justify-content: center;
+    }
+}

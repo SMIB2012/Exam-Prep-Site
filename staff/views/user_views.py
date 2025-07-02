@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, View
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Avg, Max
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from core.models import UserProfile
-from staff.forms import UserSearchForm, UserCreateForm, BulkUserUploadForm
+from staff.forms import UserSearchForm, UserCreateForm, BulkUserUploadForm, UserEditForm
 import csv
 import io
 import os
@@ -94,6 +94,105 @@ class UserListView(StaffRequiredMixin, ListView):
         })
         
         return context
+    
+    def post(self, request, *args, **kwargs):
+        """Handle bulk actions on users"""
+        action = request.POST.get('action')
+        user_ids = request.POST.getlist('user_ids')
+        
+        if not action or not user_ids:
+            messages.error(request, 'Please select an action and at least one user.')
+            return redirect('staff:user_list')
+        
+        try:
+            user_ids = [int(uid) for uid in user_ids]
+            users = User.objects.filter(id__in=user_ids)
+            count = users.count()
+            
+            if action == 'activate':
+                users.update(is_active=True)
+                messages.success(request, f'Successfully activated {count} user(s).')
+                
+            elif action == 'deactivate':
+                users.update(is_active=False)
+                messages.success(request, f'Successfully deactivated {count} user(s).')
+                
+            elif action == 'make_premium':
+                from django.utils import timezone
+                from datetime import timedelta
+                
+                # Update users to premium with 1 year expiration
+                expiry_date = timezone.now() + timedelta(days=365)
+                for user in users:
+                    profile = user.userprofile
+                    profile.is_premium = True
+                    profile.premium_expires_at = expiry_date
+                    profile.save()
+                
+                messages.success(request, f'Successfully made {count} user(s) premium.')
+                
+            elif action == 'remove_premium':
+                for user in users:
+                    profile = user.userprofile
+                    profile.is_premium = False
+                    profile.premium_expires_at = None
+                    profile.save()
+                
+                messages.success(request, f'Successfully removed premium from {count} user(s).')
+                
+            elif action == 'export':
+                # Implement CSV export
+                return self.export_users(users)
+                
+            else:
+                messages.error(request, f'Unknown action: {action}')
+                
+        except (ValueError, TypeError) as e:
+            messages.error(request, f'Invalid user selection: {str(e)}')
+        except Exception as e:
+            messages.error(request, f'Error performing bulk action: {str(e)}')
+            
+        return redirect('staff:user_list')
+    
+    def export_users(self, users):
+        """Export selected users to CSV"""
+        import csv
+        from django.http import HttpResponse
+        
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="users_export.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'ID', 'Username', 'Email', 'First Name', 'Last Name', 'Is Active', 'Is Staff',
+            'Date Joined', 'Year of Study', 'Province', 'College Type', 'College Name',
+            'Phone Number', 'Is Premium', 'Premium Expires At'
+        ])
+        
+        # Write user data
+        for user in users:
+            profile = getattr(user, 'userprofile', None)
+            writer.writerow([
+                user.id,
+                user.username,
+                user.email,
+                user.first_name,
+                user.last_name,
+                user.is_active,
+                user.is_staff,
+                user.date_joined.strftime('%Y-%m-%d %H:%M:%S'),
+                profile.year_of_study if profile else '',
+                profile.province if profile else '',
+                profile.college_type if profile else '',
+                profile.college_name if profile else '',
+                profile.phone_number if profile else '',
+                profile.is_premium if profile else False,
+                profile.premium_expires_at.strftime('%Y-%m-%d %H:%M:%S') if profile and profile.premium_expires_at else ''
+            ])
+        
+        return response
 
 
 class UserDetailView(StaffRequiredMixin, DetailView):
@@ -101,13 +200,97 @@ class UserDetailView(StaffRequiredMixin, DetailView):
     model = User
     template_name = 'staff/users/user_detail.html'
     context_object_name = 'user'
+    
+    def get_context_data(self, **kwargs):
+        """Add additional context data"""
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        
+        # Add today's date for template comparisons
+        from django.utils import timezone
+        context['today'] = timezone.now()
+        
+        # Add quiz statistics
+        try:
+            from core.models import QuizSession
+            quiz_attempts = QuizSession.objects.filter(user=user, status='completed').order_by('-completed_at')
+            
+            if quiz_attempts.exists():
+                from django.db.models import Avg, Max
+                stats = quiz_attempts.aggregate(
+                    avg_score=Avg('score'),
+                    max_score=Max('score')
+                )
+                context['quiz_stats'] = {
+                    'total_attempts': quiz_attempts.count(),
+                    'avg_score': stats['avg_score'] or 0,
+                    'max_score': stats['max_score'] or 0,
+                    'latest_attempt': quiz_attempts.first()
+                }
+            else:
+                context['quiz_stats'] = {
+                    'total_attempts': 0,
+                    'avg_score': 0,
+                    'max_score': 0,
+                    'latest_attempt': None
+                }
+            
+            # Add recent quiz attempts (last 5)
+            context['recent_attempts'] = quiz_attempts[:5]
+            
+        except ImportError:
+            # Handle case where QuizSession model doesn't exist yet
+            context['quiz_stats'] = {
+                'total_attempts': 0,
+                'avg_score': 0,
+                'max_score': 0,
+                'latest_attempt': None
+            }
+            context['recent_attempts'] = []
+        
+        return context
 
 
 class UserEditView(StaffRequiredMixin, UpdateView):
     """Edit user details"""
     model = User
+    form_class = UserEditForm
     template_name = 'staff/users/user_edit.html'
-    fields = ['first_name', 'last_name', 'email', 'is_active']
+    
+    def get_context_data(self, **kwargs):
+        """Add additional context for user edit page"""
+        context = super().get_context_data(**kwargs)
+        user = self.object
+        
+        # Add quiz statistics
+        from core.models import QuizSession
+        attempts = QuizSession.objects.filter(user=user, status='completed')
+        if attempts.exists():
+            total_attempts = attempts.count()
+            avg_score = attempts.aggregate(avg_score=Avg('score'))['avg_score'] or 0
+            max_score = attempts.aggregate(max_score=Max('score'))['max_score'] or 0
+            latest_attempt = attempts.order_by('-completed_at').first()
+            
+            context['quiz_stats'] = {
+                'total_attempts': total_attempts,
+                'avg_score': avg_score,
+                'max_score': max_score,
+                'latest_attempt': latest_attempt,
+            }
+        else:
+            context['quiz_stats'] = {
+                'total_attempts': 0,
+                'avg_score': 0,
+                'max_score': 0,
+                'latest_attempt': None,
+            }
+        
+        return context
+    
+    def get_success_url(self):
+        """Redirect to user detail page after successful edit"""
+        messages.success(self.request, f'User "{self.object.get_full_name()}" has been updated successfully!')
+        return reverse_lazy('staff:user_detail', kwargs={'pk': self.object.pk})
 
 class UserCreateView(StaffRequiredMixin, CreateView):
     """Create new user with profile"""

@@ -19,15 +19,16 @@ def create_user_profile(sender, instance, created, **kwargs):
         UserProfile.objects.create(user=instance)
 
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    """
-    Save UserProfile when User is saved
-    """
-    try:
-        instance.userprofile.save()
-    except UserProfile.DoesNotExist:
-        UserProfile.objects.create(user=instance)
+# DISABLED: This signal was overwriting profile data
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     """
+#     Save UserProfile when User is saved
+#     """
+#     try:
+#         instance.userprofile.save()
+#     except UserProfile.DoesNotExist:
+#         UserProfile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=QuizSession)

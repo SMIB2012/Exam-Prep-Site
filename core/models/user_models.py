@@ -16,11 +16,24 @@ class UserProfile(models.Model):
         ('graduate', 'Graduate'),
     ]
     
+    PROVINCE_CHOICES = [
+        ('Punjab', 'Punjab'),
+        ('Sindh', 'Sindh'),
+        ('Khyber Pakhtunkhwa', 'Khyber Pakhtunkhwa'),
+        ('Balochistan', 'Balochistan'),
+        ('Azad Jammu & Kashmir', 'Azad Jammu & Kashmir'),
+    ]
+    
+    COLLEGE_TYPE_CHOICES = [
+        ('Public', 'Public'),
+        ('Private', 'Private'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    year_of_study = models.CharField(max_length=20, choices=YEAR_CHOICES)
-    province = models.CharField(max_length=100)
-    college_type = models.CharField(max_length=20, choices=[('Public', 'Public'), ('Private', 'Private')])
-    college_name = models.CharField(max_length=200)
+    year_of_study = models.CharField(max_length=20, choices=YEAR_CHOICES, blank=True)
+    province = models.CharField(max_length=100, choices=PROVINCE_CHOICES, blank=True)
+    college_type = models.CharField(max_length=20, choices=COLLEGE_TYPE_CHOICES, blank=True)
+    college_name = models.CharField(max_length=200, blank=True)
     phone_number = models.CharField(max_length=15, blank=True)
     profile_picture = models.ImageField(upload_to='uploads/profiles/', blank=True, null=True)
     is_premium = models.BooleanField(default=False)

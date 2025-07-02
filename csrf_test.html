@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSRF Token Test</title>
+</head>
+<body>
+    <h1>CSRF Token Debug</h1>
+    
+    <!-- CSRF Token like in Django -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="test-csrf-token-12345">
+    
+    <script>
+        // Test the CSRF token finding logic
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        console.log('CSRF Token found:', csrfToken);
+        console.log('CSRF Token value:', csrfToken ? csrfToken.value : 'NOT FOUND');
+        
+        // Test form creation logic
+        function testFormCreation() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/test/';
+            
+            // Add CSRF token
+            if (csrfToken) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = csrfToken.value;
+                form.appendChild(csrfInput);
+                console.log('CSRF token added to form');
+            } else {
+                console.log('ERROR: CSRF token not found!');
+            }
+            
+            // Add action
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'make_premium';
+            form.appendChild(actionInput);
+            
+            // Add user IDs
+            const userInput = document.createElement('input');
+            userInput.type = 'hidden';
+            userInput.name = 'user_ids';
+            userInput.value = '123';
+            form.appendChild(userInput);
+            
+            console.log('Form HTML:', form.outerHTML);
+            
+            // Don't actually submit, just log
+            console.log('Form would be submitted to:', form.action);
+            console.log('Form method:', form.method);
+            console.log('Form children count:', form.children.length);
+        }
+        
+        // Test after page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded, testing form creation...');
+            testFormCreation();
+        });
+    </script>
+</body>
+</html>

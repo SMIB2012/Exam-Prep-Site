@@ -139,6 +139,11 @@ class UserRegistrationForm(UserCreationForm):
                 Column('phone_number', css_class='form-group col-md-6 mb-3'),
                 css_class='form-row'
             ),
+            Row(
+                Column('province', css_class='form-group col-md-6 mb-3'),
+                Column('college_type', css_class='form-group col-md-6 mb-3'),
+                css_class='form-row'
+            ),
             Field('college_name', css_class='form-group mb-3'),
             Submit('submit', 'Register', css_class='btn btn-primary btn-lg')
         )
@@ -322,16 +327,14 @@ class UserRegistrationForm(UserCreationForm):
         
         if commit:
             user.save()
-            # Only create user profile if it doesn't exist
-            if not hasattr(user, 'userprofile'):
-                UserProfile.objects.create(
-                    user=user,
-                    year_of_study=self.cleaned_data['year_of_study'],
-                    province=self.cleaned_data['province'],
-                    college_type=self.cleaned_data['college_type'],
-                    college_name=self.cleaned_data['college_name'],
-                    phone_number=self.cleaned_data.get('phone_number', '')
-                )
+            # Get or create user profile and update it with form data
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.year_of_study = self.cleaned_data['year_of_study']
+            profile.province = self.cleaned_data['province']
+            profile.college_type = self.cleaned_data['college_type']
+            profile.college_name = self.cleaned_data['college_name']
+            profile.phone_number = self.cleaned_data.get('phone_number', '')
+            profile.save()
         return user
 
 

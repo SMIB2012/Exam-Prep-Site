@@ -142,6 +142,9 @@
         </div>
     </div>
 
+    <!-- CSRF Token for bulk actions -->
+    {% csrf_token %}
+
     {% if users %}
     <div class="table-responsive">
         <table class="table table-hover align-middle">
@@ -217,10 +220,10 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <a href="#" class="btn btn-sm btn-outline-primary" title="View Details">
+                            <a href="{% url 'staff:user_detail' user.pk %}" class="btn btn-sm btn-outline-primary" title="View Details">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="#" class="btn btn-sm btn-outline-success" title="Edit User">
+                            <a href="{% url 'staff:user_edit' user.pk %}" class="btn btn-sm btn-outline-success" title="Edit User">
                                 <i class="fas fa-edit"></i>
                             </a>
                             {% if user.is_active %}

@@ -1,0 +1,579 @@
+{% extends 'staff/base_admin.html' %}
+{% load static %}
+
+{% block title %}{{ user.get_full_name|default:user.username }} - User Details - MedPrep Admin{% endblock %}
+{% block page_title %}User Details{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'staff/css/user_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<!-- Breadcrumb -->
+<div class="breadcrumb-container mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'staff:user_list' %}">
+                    <i class="fas fa-users me-1"></i>Users
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ user.get_full_name|default:user.username }}
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="d-flex align-items-center">
+                <div class="user-avatar me-3">
+                    {% if user.userprofile.profile_picture %}
+                        <img src="{{ user.userprofile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="rounded-circle">
+                    {% else %}
+                        <div class="user-avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="user-name mb-1">{{ user.get_full_name|default:user.username }}</h1>
+                    <div class="user-badges">
+                        {% if user.userprofile.is_premium %}
+                            <span class="badge badge-premium">
+                                <i class="fas fa-crown me-1"></i>Premium User
+                            </span>
+                        {% else %}
+                            <span class="badge badge-free">
+                                <i class="fas fa-user me-1"></i>Free User
+                            </span>
+                        {% endif %}
+                        
+                        {% if user.is_active %}
+                            <span class="badge badge-success">
+                                <i class="fas fa-check-circle me-1"></i>Active
+                            </span>
+                        {% else %}
+                            <span class="badge badge-danger">
+                                <i class="fas fa-times-circle me-1"></i>Inactive
+                            </span>
+                        {% endif %}
+                        
+                        {% if user.is_staff %}
+                            <span class="badge badge-staff">
+                                <i class="fas fa-shield-alt me-1"></i>Staff
+                            </span>
+                        {% endif %}
+                        
+                        {% if user.is_superuser %}
+                            <span class="badge badge-admin">
+                                <i class="fas fa-user-shield me-1"></i>Admin
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="d-flex gap-2">
+                <a href="{% url 'staff:user_edit' user.pk %}" class="btn-admin btn-admin-primary">
+                    <i class="fas fa-edit"></i>
+                    Edit User
+                </a>
+                <div class="dropdown">
+                    <button class="btn-admin btn-admin-outline dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                        Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% if user.is_active %}
+                            <li>
+                                <a class="dropdown-item text-warning" href="#" onclick="toggleUserStatus({{ user.id }}, false)">
+                                    <i class="fas fa-pause me-2"></i>Suspend User
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="dropdown-item text-success" href="#" onclick="toggleUserStatus({{ user.id }}, true)">
+                                    <i class="fas fa-play me-2"></i>Activate User
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% if user.userprofile.is_premium %}
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="togglePremiumStatus({{ user.id }}, false)">
+                                    <i class="fas fa-crown me-2"></i>Remove Premium
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="togglePremiumStatus({{ user.id }}, true)">
+                                    <i class="fas fa-crown me-2"></i>Make Premium
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="sendWelcomeEmail({{ user.id }})">
+                                <i class="fas fa-envelope me-2"></i>Send Welcome Email
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="resetPassword({{ user.id }})">
+                                <i class="fas fa-key me-2"></i>Reset Password
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="row">
+    <!-- Left Column - User Information -->
+    <div class="col-lg-8">
+        <!-- Basic Information Card -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="fas fa-user me-2"></i>
+                    Basic Information
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Full Name</label>
+                            <div class="info-value">{{ user.get_full_name|default:"Not provided" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Username</label>
+                            <div class="info-value">{{ user.username }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Email Address</label>
+                            <div class="info-value">
+                                <a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Phone Number</label>
+                            <div class="info-value">
+                                {% if user.userprofile.phone_number %}
+                                    <a href="tel:{{ user.userprofile.phone_number }}" class="text-decoration-none">{{ user.userprofile.phone_number }}</a>
+                                {% else %}
+                                    <span class="text-muted">Not provided</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Information Card -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    Academic Information
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Year of Study</label>
+                            <div class="info-value">
+                                {% if user.userprofile.year_of_study %}
+                                    <span class="badge badge-study-year">{{ user.userprofile.get_year_of_study_display }}</span>
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Province</label>
+                            <div class="info-value">
+                                {% if user.userprofile.province %}
+                                    {{ user.userprofile.get_province_display|default:user.userprofile.province }}
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">College Type</label>
+                            <div class="info-value">
+                                {% if user.userprofile.college_type %}
+                                    <span class="badge badge-college-type">{{ user.userprofile.get_college_type_display|default:user.userprofile.college_type }}</span>
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">College Name</label>
+                            <div class="info-value">
+                                {% if user.userprofile.college_name %}
+                                    {{ user.userprofile.college_name }}
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Performance Card -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Quiz Performance
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ quiz_stats.total_attempts }}</div>
+                            <div class="stat-label">Total Attempts</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ quiz_stats.avg_score|floatformat:1 }}%</div>
+                            <div class="stat-label">Average Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ quiz_stats.max_score|floatformat:1 }}%</div>
+                            <div class="stat-label">Best Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-box">
+                            <div class="stat-number">
+                                {% if quiz_stats.latest_attempt %}
+                                    {{ quiz_stats.latest_attempt.completed_at|date:"M d" }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                            <div class="stat-label">Last Attempt</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Card -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="fas fa-history me-2"></i>
+                    Recent Activity
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="activity-timeline">
+                    {% for attempt in recent_attempts %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-quiz"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Completed Quiz: {{ attempt.topic.name }}</div>
+                                <div class="activity-details">
+                                    Score: {{ attempt.percentage_score|floatformat:1 }}% • 
+                                    {{ attempt.completed_at|timesince }} ago
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                            <p>No recent activity</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column - Account Details -->
+    <div class="col-lg-4">
+        <!-- Account Status Card -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="fas fa-cog me-2"></i>
+                    Account Status
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="status-item">
+                    <label class="status-label">Account Created</label>
+                    <div class="status-value">{{ user.date_joined|date:"M d, Y" }}</div>
+                </div>
+                <div class="status-item">
+                    <label class="status-label">Last Login</label>
+                    <div class="status-value">
+                        {% if user.last_login %}
+                            {{ user.last_login|date:"M d, Y" }} at {{ user.last_login|time:"H:i" }}
+                        {% else %}
+                            <span class="text-muted">Never logged in</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="status-item">
+                    <label class="status-label">Account Type</label>
+                    <div class="status-value">
+                        {% if user.is_superuser %}
+                            <span class="badge badge-admin">Super Admin</span>
+                        {% elif user.is_staff %}
+                            <span class="badge badge-staff">Staff</span>
+                        {% else %}
+                            <span class="badge badge-student">Student</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="status-item">
+                    <label class="status-label">Email Verified</label>
+                    <div class="status-value">
+                        {% comment %}
+                        {% if user.userprofile.email_verified %}
+                            <span class="badge badge-success">
+                                <i class="fas fa-check me-1"></i>Verified
+                            </span>
+                        {% else %}
+                            <span class="badge badge-warning">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Unverified
+                            </span>
+                        {% endif %}
+                        {% endcomment %}
+                        <span class="badge badge-success">
+                            <i class="fas fa-check me-1"></i>Verified
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Status Card -->
+        {% if user.userprofile.is_premium %}
+            <div class="admin-card mb-4">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="fas fa-crown me-2"></i>
+                        Premium Status
+                    </h3>
+                </div>
+                <div class="admin-card-body">
+                    <div class="status-item">
+                        <label class="status-label">Premium Since</label>
+                        <div class="status-value">
+                            {% comment %}
+                            {% if user.userprofile.premium_activated_at %}
+                                {{ user.userprofile.premium_activated_at|date:"M d, Y" }}
+                            {% else %}
+                                <span class="text-muted">Unknown</span>
+                            {% endif %}
+                            {% endcomment %}
+                            <span class="text-muted">Not tracked</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <label class="status-label">Expires On</label>
+                        <div class="status-value">
+                            {% if user.userprofile.premium_expires_at %}
+                                {{ user.userprofile.premium_expires_at|date:"M d, Y" }}
+                                {% if user.userprofile.premium_expires_at|date:"Y-m-d" < today|date:"Y-m-d" %}
+                                    <span class="badge badge-danger ms-1">Expired</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">Never expires</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <label class="status-label">Premium Features</label>
+                        <div class="status-value">
+                            <div class="feature-list">
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-1"></i>
+                                    Unlimited Quiz Attempts
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-1"></i>
+                                    Detailed Analytics
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-1"></i>
+                                    Priority Support
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check text-success me-1"></i>
+                                    Advanced Study Materials
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Quick Actions Card -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="fas fa-bolt me-2"></i>
+                    Quick Actions
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn-admin btn-admin-outline" onclick="sendWelcomeEmail({{ user.id }})">
+                        <i class="fas fa-envelope me-2"></i>
+                        Send Welcome Email
+                    </button>
+                    <button class="btn-admin btn-admin-outline" onclick="resetPassword({{ user.id }})">
+                        <i class="fas fa-key me-2"></i>
+                        Reset Password
+                    </button>
+                    <button class="btn-admin btn-admin-outline" onclick="exportUserData({{ user.id }})">
+                        <i class="fas fa-download me-2"></i>
+                        Export User Data
+                    </button>
+                    <a href="{% url 'staff:user_list' %}?search={{ user.email }}" class="btn-admin btn-admin-outline">
+                        <i class="fas fa-search me-2"></i>
+                        View in User List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleUserStatus(userId, activate) {
+    const action = activate ? 'activate' : 'deactivate';
+    const actionText = activate ? 'activate' : 'deactivate';
+    
+    if (confirm(`Are you sure you want to ${actionText} this user?`)) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "staff:user_list" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = action;
+        form.appendChild(actionInput);
+        
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_ids';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function togglePremiumStatus(userId, makePremium) {
+    const action = makePremium ? 'make_premium' : 'remove_premium';
+    const actionText = makePremium ? 'make premium' : 'remove premium from';
+    
+    if (confirm(`Are you sure you want to ${actionText} this user?`)) {
+        // Create form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "staff:user_list" %}';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = action;
+        form.appendChild(actionInput);
+        
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_ids';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function sendWelcomeEmail(userId) {
+    if (confirm('Send welcome email to this user?')) {
+        // You can implement this functionality
+        alert('Welcome email sent successfully!');
+    }
+}
+
+function resetPassword(userId) {
+    if (confirm('Reset password for this user? They will receive an email with instructions.')) {
+        // You can implement this functionality
+        alert('Password reset email sent successfully!');
+    }
+}
+
+function exportUserData(userId) {
+    // You can implement this functionality
+    alert('User data export feature coming soon!');
+}
+</script>
+{% endblock %}

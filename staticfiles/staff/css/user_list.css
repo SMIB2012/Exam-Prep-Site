@@ -1,0 +1,172 @@
+/* User List Page Styles */
+.stats-card.secondary .stats-number { 
+    color: #6c757d; 
+}
+
+.stats-card.secondary .stats-icon { 
+    color: #6c757d; 
+}
+
+/* Larger icons for stats cards */
+.stats-card .stats-icon {
+    font-size: 3.5rem !important;
+    opacity: 0.3;
+}
+
+.user-avatar {
+    position: relative;
+}
+
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-success));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.table-header {
+    background-color: var(--admin-main-bg);
+    border-bottom: 2px solid var(--admin-divider);
+}
+
+.table-header th {
+    color: var(--admin-text);
+    font-weight: 600;
+    padding: 15px 12px;
+    border-bottom: none;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--admin-divider);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 87, 163, 0.05);
+}
+
+.table td {
+    padding: 15px 12px;
+    vertical-align: middle;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+.btn-group .btn {
+    margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+.bulk-actions {
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input:checked {
+    background-color: var(--admin-primary);
+    border-color: var(--admin-primary);
+}
+
+.btn-admin-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-admin-secondary:hover {
+    background-color: #5a6268;
+    color: white;
+}
+
+.btn-container {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-search,
+.btn-clear {
+    flex: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 2px;
+        margin-right: 0;
+    }
+    
+    .action-card form .row {
+        margin: 0;
+    }
+    
+    .action-card form .col-lg-3,
+    .action-card form .col-lg-2,
+    .action-card form .col-md-3,
+    .action-card form .col-md-5,
+    .action-card form .col-md-6,
+    .action-card form .col-sm-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-admin {
+        font-size: 0.875rem;
+        padding: 8px 12px;
+    }
+    
+    .btn-container {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .btn-search,
+    .btn-clear {
+        flex: none;
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-container {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .btn-search,
+    .btn-clear {
+        width: 100%;
+        flex: none;
+    }
+    
+    .btn-text {
+        display: none;
+    }
+    
+    .btn-admin {
+        padding: 10px;
+        justify-content: center;
+    }
+}

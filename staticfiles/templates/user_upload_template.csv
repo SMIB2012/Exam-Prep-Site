@@ -1,0 +1,16 @@
+# MedAce Bulk User Upload Template
+# Instructions:
+# 1. Fill in the user data below the header row
+# 2. Required fields: first_name, last_name, email
+# 3. Optional fields can be left empty - defaults will be used
+# 4. For role: use 'student', 'faculty', or 'admin'
+# 5. For year_of_study: use '1st_year', '2nd_year', '3rd_year', '4th_year', 'final_year', 'graduate'
+# 6. For is_premium and is_active: use 'TRUE' or 'FALSE'
+# 7. Delete these instruction lines before uploading
+#
+first_name,last_name,email,password,role,year_of_study,province,college_type,college_name,phone_number,is_premium,is_active
+Ahmed,Hassan,ahmed.hassan@example.com,SecurePass123!,student,1st_year,Punjab,Public,King Edward Medical University (Lahore),+92-300-1234567,FALSE,TRUE
+Fatima,Ali,fatima.ali@example.com,StudentPass456!,student,2nd_year,Sindh,Private,Aga Khan University,+92-321-9876543,TRUE,TRUE
+Dr. Muhammad,Khan,dr.khan@example.com,FacultyPass789!,faculty,,Khyber Pakhtunkhwa,Public,Khyber Medical College (Peshawar),+92-333-5555555,FALSE,TRUE
+Dr. Sarah,Ahmed,dr.sarah@example.com,,faculty,,Punjab,Private,Lahore Medical & Dental College,+92-300-7777777,TRUE,TRUE
+Admin,User,admin@example.com,AdminPass999!,admin,,Sindh,Public,Dow Medical College,+92-321-8888888,TRUE,TRUE
