@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('staff/', include('staff.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),  # Add Django auth URLs
     path('', include('core.urls')),
 ]
 

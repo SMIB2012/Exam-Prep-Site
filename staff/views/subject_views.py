@@ -9,6 +9,25 @@ class SubjectListView(StaffRequiredMixin, ListView):
     model = Subject
     template_name = 'staff/subjects/subject_list.html'
     context_object_name = 'subjects'
+    
+    def get_context_data(self, **kwargs):
+        """Add additional context for the template"""
+        context = super().get_context_data(**kwargs)
+        
+        # Calculate statistics
+        all_subjects = Subject.objects.all()
+        context['active_subjects'] = all_subjects.filter(is_active=True).count()
+        
+        # Get total topics and questions count
+        try:
+            from core.models import Question
+            context['total_topics'] = Topic.objects.count()
+            context['total_questions'] = Question.objects.count()
+        except ImportError:
+            context['total_topics'] = 0
+            context['total_questions'] = 0
+        
+        return context
 
 
 class SubjectCreateView(StaffRequiredMixin, CreateView):

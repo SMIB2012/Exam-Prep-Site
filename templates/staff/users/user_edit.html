@@ -205,7 +205,7 @@
                 <div class="stat-card">
                     <div class="stat-number">
                         {% if user.last_login %}
-                            {{ user.last_login|timesince|truncatewords:1 }}
+                            {{ user.last_login|timesince }} ago
                         {% else %}
                             Never
                         {% endif %}
@@ -541,6 +541,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'staff/js/user_edit.js' %}"></script>
 <script>
 function resetPassword(userId) {
     if (confirm('Reset password for this user? They will receive an email with instructions.')) {
@@ -685,10 +686,22 @@ function sendWelcomeEmail(userId) {
 }
 
 function exportUserData(userId) {
-    alert('User data export feature coming soon!');
+    // Create a temporary form to download the CSV
+    const form = document.createElement('form');
+    form.method = 'GET';
+    form.action = `/staff/users/${userId}/export/`;
+    form.style.display = 'none';
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    // Show success message
+    showNotification('User data export started. Download should begin shortly.', 'success');
 }
 
 // Form validation and dynamic updates
+// College dropdown logic is handled in user_edit.js
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('userEditForm');
     const isPremiumCheckbox = document.querySelector('#id_is_premium');
@@ -733,5 +746,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Notification system
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
 </script>
 {% endblock %}

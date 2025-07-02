@@ -17,6 +17,7 @@ urlpatterns = [
     path('users/bulk-upload/', views.BulkUserUploadView.as_view(), name='user_bulk_upload'),
     path('users/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
     path('users/<int:pk>/edit/', views.UserEditView.as_view(), name='user_edit'),
+    path('users/<int:pk>/export/', views.UserExportView.as_view(), name='user_export'),
     
     # Question Management
     path('questions/', views.QuestionListView.as_view(), name='question_list'),

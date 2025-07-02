@@ -28,6 +28,10 @@ class DashboardView(UserPassesTestMixin, TemplateView):
         new_users_today = User.objects.filter(date_joined__date=today).count()
         new_users_week = User.objects.filter(date_joined__date__gte=week_ago).count()
         
+        # Premium user statistics
+        premium_users = User.objects.filter(userprofile__is_premium=True).count()
+        premium_percentage = (premium_users / total_users * 100) if total_users > 0 else 0
+        
         # Question statistics
         total_questions = Question.objects.filter(is_active=True).count()
         premium_questions = Question.objects.filter(is_active=True, is_premium=True).count()
@@ -37,6 +41,13 @@ class DashboardView(UserPassesTestMixin, TemplateView):
             Q(status='pending') | Q(status='submitted')
         ).count()
         approved_payments = PaymentProof.objects.filter(status='approved').count()
+        
+        # Revenue statistics (mock data for now)
+        total_revenue = approved_payments * 2000  # Assuming average 2000 PKR per payment
+        monthly_revenue = PaymentProof.objects.filter(
+            status='approved',
+            submitted_at__date__gte=month_ago
+        ).count() * 2000
         
         # Quiz statistics
         total_quiz_attempts = QuizSession.objects.count()
@@ -51,8 +62,12 @@ class DashboardView(UserPassesTestMixin, TemplateView):
             'total_users': total_users,
             'new_users_today': new_users_today,
             'new_users_week': new_users_week,
+            'premium_users': premium_users,
+            'premium_percentage': premium_percentage,
             'total_questions': total_questions,
             'premium_questions': premium_questions,
+            'total_revenue': total_revenue,
+            'monthly_revenue': monthly_revenue,
             'pending_payments': pending_payments,
             'approved_payments': approved_payments,
             'total_quiz_attempts': total_quiz_attempts,

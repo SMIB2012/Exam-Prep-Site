@@ -33,6 +33,23 @@
         <div class="stats-card success">
             <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
+                    <div class="stats-number">{{ premium_users }}</div>
+                    <div class="stats-label">Premium Users</div>
+                    <div class="stats-change text-muted">
+                        {{ premium_percentage|floatformat:1 }}% of total
+                    </div>
+                </div>
+                <div class="stats-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card warning">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
                     <div class="stats-number">{{ total_questions }}</div>
                     <div class="stats-label">Total Questions</div>
                     <div class="stats-change text-muted">
@@ -47,17 +64,17 @@
     </div>
     
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="stats-card warning">
+        <div class="stats-card info">
             <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
-                    <div class="stats-number">{{ pending_payments }}</div>
-                    <div class="stats-label">Pending Payments</div>
+                    <div class="stats-number">{{ total_revenue|floatformat:0 }}</div>
+                    <div class="stats-label">Total Revenue</div>
                     <div class="stats-change text-muted">
-                        {{ approved_payments }} approved
+                        PKR {{ monthly_revenue|floatformat:0 }} this month
                     </div>
                 </div>
                 <div class="stats-icon">
-                    <i class="fas fa-credit-card"></i>
+                    <i class="fas fa-money-bill-wave"></i>
                 </div>
             </div>
         </div>
@@ -68,7 +85,7 @@
             <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
                     <div class="stats-number">{{ total_quiz_attempts }}</div>
-                    <div class="stats-label">Quiz Attempts</div>
+                    <div class="stats-label">Total Quiz Attempts</div>
                     {% if quiz_attempts_today > 0 %}
                         <div class="stats-change text-success">
                             <i class="fas fa-arrow-up"></i> +{{ quiz_attempts_today }} today

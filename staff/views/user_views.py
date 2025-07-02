@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.contrib.staticfiles import finders
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from core.models import UserProfile
 from staff.forms import UserSearchForm, UserCreateForm, BulkUserUploadForm, UserEditForm
 import csv
@@ -30,6 +31,56 @@ class UserListView(StaffRequiredMixin, ListView):
     template_name = 'staff/users/user_list.html'
     context_object_name = 'users'
     paginate_by = 20
+    
+    def get(self, request, *args, **kwargs):
+        """Override get to handle pagination errors gracefully"""
+        try:
+            return super().get(request, *args, **kwargs)
+        except (EmptyPage, PageNotAnInteger):
+            # Redirect to page 1 if invalid page requested
+            from django.http import HttpResponseRedirect
+            from django.urls import reverse
+            
+            # Build query string without page parameter
+            query_dict = request.GET.copy()
+            if 'page' in query_dict:
+                del query_dict['page']
+            
+            url = reverse('staff:user_list')
+            if query_dict:
+                url += f'?{query_dict.urlencode()}'
+            
+            # Add a message to inform user
+            messages.warning(request, 'Invalid page number. Redirected to page 1.')
+            return HttpResponseRedirect(url)
+    
+    def paginate_queryset(self, queryset, page_size):
+        """Override to handle invalid page numbers gracefully"""
+        paginator = self.get_paginator(
+            queryset, page_size, orphans=self.get_paginate_orphans(),
+            allow_empty_first_page=self.get_allow_empty())
+        
+        page_kwarg = self.page_kwarg
+        page = self.kwargs.get(page_kwarg) or self.request.GET.get(page_kwarg) or 1
+        
+        try:
+            page_number = int(page)
+        except ValueError:
+            page_number = 1
+            
+        # Ensure page number is within valid range
+        if page_number < 1:
+            page_number = 1
+        elif page_number > paginator.num_pages and paginator.num_pages > 0:
+            page_number = paginator.num_pages
+            
+        try:
+            page = paginator.page(page_number)
+            return (paginator, page, page.object_list, page.has_other_pages())
+        except (EmptyPage, PageNotAnInteger):
+            # Fallback to page 1
+            page = paginator.page(1)
+            return (paginator, page, page.object_list, page.has_other_pages())
     
     def get_queryset(self):
         """Filter users based on search and filter parameters"""
@@ -140,6 +191,30 @@ class UserListView(StaffRequiredMixin, ListView):
                 
                 messages.success(request, f'Successfully removed premium from {count} user(s).')
                 
+            elif action == 'reset_password':
+                # Send password reset emails to selected users
+                from django.contrib.auth.forms import PasswordResetForm
+                from django.contrib.sites.shortcuts import get_current_site
+                
+                success_count = 0
+                for user in users:
+                    if user.email:
+                        # Use Django's built-in password reset functionality
+                        form = PasswordResetForm({'email': user.email})
+                        if form.is_valid():
+                            form.save(
+                                request=request,
+                                use_https=request.is_secure(),
+                                email_template_name='registration/password_reset_email.html',
+                                subject_template_name='registration/password_reset_subject.txt'
+                            )
+                            success_count += 1
+                
+                if success_count > 0:
+                    messages.success(request, f'Password reset emails sent to {success_count} user(s).')
+                else:
+                    messages.warning(request, 'No password reset emails were sent. Users may not have valid email addresses.')
+                
             elif action == 'export':
                 # Implement CSV export
                 return self.export_users(users)
@@ -196,10 +271,132 @@ class UserListView(StaffRequiredMixin, ListView):
 
 
 class UserDetailView(StaffRequiredMixin, DetailView):
-    """View user details"""
+    """View user details with action handling"""
     model = User
     template_name = 'staff/users/user_detail.html'
     context_object_name = 'user'
+    
+    def post(self, request, *args, **kwargs):
+        """Handle AJAX actions for user detail page"""
+        user = self.get_object()
+        action = request.POST.get('action')
+        
+        try:
+            if action == 'toggle_status':
+                status = request.POST.get('status') == 'true'
+                user.is_active = status
+                user.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': f'User {"activated" if status else "suspended"} successfully.',
+                    'new_status': status
+                })
+                
+            elif action == 'toggle_premium':
+                is_premium = request.POST.get('is_premium') == 'true'
+                profile = user.userprofile
+                profile.is_premium = is_premium
+                
+                if is_premium:
+                    # Set premium expiration to 1 year from now
+                    from django.utils import timezone
+                    from datetime import timedelta
+                    profile.premium_expires_at = timezone.now() + timedelta(days=365)
+                else:
+                    profile.premium_expires_at = None
+                    
+                profile.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': f'Premium status {"enabled" if is_premium else "removed"} successfully.',
+                    'is_premium': is_premium
+                })
+                
+            elif action == 'send_welcome_email':
+                # Use the same welcome email logic from UserCreateView
+                self._send_welcome_email(user)
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Welcome email sent successfully!'
+                })
+                
+            elif action == 'reset_password':
+                # Use Django's built-in password reset
+                from django.contrib.auth.forms import PasswordResetForm
+                if user.email:
+                    form = PasswordResetForm({'email': user.email})
+                    if form.is_valid():
+                        form.save(
+                            request=request,
+                            use_https=request.is_secure(),
+                            email_template_name='registration/password_reset_email.html',
+                            subject_template_name='registration/password_reset_subject.txt'
+                        )
+                        return JsonResponse({
+                            'success': True,
+                            'message': 'Password reset email sent successfully!'
+                        })
+                    else:
+                        return JsonResponse({
+                            'success': False,
+                            'message': 'Failed to send password reset email.'
+                        })
+                else:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'User has no email address.'
+                    })
+                    
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Unknown action.'
+                })
+                
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error: {str(e)}'
+            })
+    
+    def _send_welcome_email(self, user):
+        """Send welcome email to user"""
+        try:
+            subject = f'Welcome to MedPrep, {user.first_name}!'
+            message = f'''
+            Dear {user.first_name},
+
+            Welcome to MedPrep - Your Medical Education Platform!
+
+            Your account has been created successfully. You can now:
+            - Take practice quizzes
+            - Access study materials
+            - Track your progress
+            - Compete with fellow medical students
+
+            Get started by taking your first quiz or exploring our study resources.
+
+            Best of luck with your medical studies!
+
+            The MedPrep Team
+            '''
+            
+            html_message = render_to_string('emails/welcome_user.html', {
+                'user': user,
+                'site_name': 'MedPrep'
+            })
+            
+            send_mail(
+                subject=subject,
+                message=message,
+                html_message=html_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=True
+            )
+        except Exception as e:
+            # Log error but don't fail the action
+            pass
     
     def get_context_data(self, **kwargs):
         """Add additional context data"""
@@ -716,3 +913,75 @@ class BulkUserUploadView(StaffRequiredMixin, View):
         except Exception as e:
             # Log error but don't fail the user creation
             pass
+
+
+class UserExportView(StaffRequiredMixin, View):
+    """Export a single user's data to CSV"""
+    
+    def get(self, request, pk):
+        """Export user data as CSV download"""
+        try:
+            user = User.objects.select_related('userprofile').get(pk=pk)
+        except User.DoesNotExist:
+            messages.error(request, 'User not found.')
+            return redirect('staff:user_list')
+        
+        # Create the CSV response
+        response = HttpResponse(content_type='text/csv')
+        filename = f"user_{user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'Field', 'Value'
+        ])
+        
+        # Write user basic info
+        writer.writerow(['User ID', user.id])
+        writer.writerow(['Username', user.username])
+        writer.writerow(['Email', user.email])
+        writer.writerow(['First Name', user.first_name])
+        writer.writerow(['Last Name', user.last_name])
+        writer.writerow(['Is Active', user.is_active])
+        writer.writerow(['Is Staff', user.is_staff])
+        writer.writerow(['Is Superuser', user.is_superuser])
+        writer.writerow(['Date Joined', user.date_joined.strftime('%Y-%m-%d %H:%M:%S')])
+        writer.writerow(['Last Login', user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else 'Never'])
+        
+        # Write profile info if exists
+        profile = getattr(user, 'userprofile', None)
+        if profile:
+            writer.writerow(['--- Profile Information ---', ''])
+            writer.writerow(['Year of Study', profile.year_of_study])
+            writer.writerow(['Province', profile.province])
+            writer.writerow(['College Type', profile.college_type])
+            writer.writerow(['College Name', profile.college_name])
+            writer.writerow(['Phone Number', profile.phone_number])
+            writer.writerow(['Is Premium', profile.is_premium])
+            writer.writerow(['Premium Expires At', profile.premium_expires_at.strftime('%Y-%m-%d %H:%M:%S') if profile.premium_expires_at else 'N/A'])
+            writer.writerow(['Profile Created', profile.created_at.strftime('%Y-%m-%d %H:%M:%S')])
+            writer.writerow(['Profile Updated', profile.updated_at.strftime('%Y-%m-%d %H:%M:%S')])
+        
+        # Add quiz statistics if available
+        try:
+            from core.models import QuizSession
+            quiz_sessions = QuizSession.objects.filter(user=user)
+            if quiz_sessions.exists():
+                writer.writerow(['--- Quiz Statistics ---', ''])
+                writer.writerow(['Total Quiz Sessions', quiz_sessions.count()])
+                writer.writerow(['Completed Sessions', quiz_sessions.filter(completed=True).count()])
+                
+                completed_sessions = quiz_sessions.filter(completed=True, score__isnull=False)
+                if completed_sessions.exists():
+                    avg_score = completed_sessions.aggregate(avg_score=Avg('score'))['avg_score']
+                    best_score = completed_sessions.aggregate(best_score=Max('score'))['best_score']
+                    writer.writerow(['Average Score', f"{avg_score:.2f}%" if avg_score else 'N/A'])
+                    writer.writerow(['Best Score', f"{best_score:.2f}%" if best_score else 'N/A'])
+                    
+        except ImportError:
+            # QuizSession model might not exist
+            pass
+        
+        return response
